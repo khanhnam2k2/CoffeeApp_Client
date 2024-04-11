@@ -11,10 +11,21 @@ const axiosClient = axios.create({
 const getCategoryList = () => axiosClient.get("/api/category");
 
 // Api Product
+const getProductList = () => axiosClient.get("/api/product");
+
 const getProductBestSellers = () =>
-  axiosClient.get("/api/product/best-sellers");
+  axiosClient.get("/api/product?bestsellers=true");
+
+const getProductByCategory = (categoryId) =>
+  axiosClient.get("/api/product/" + categoryId);
+
+const searchProductList = (searchKey) =>
+  axiosClient.get("/api/product/search?name=" + searchKey);
 
 export default {
+  getProductList,
   getCategoryList,
   getProductBestSellers,
+  getProductByCategory,
+  searchProductList,
 };

@@ -48,9 +48,10 @@ const HomeTabs = () => {
           borderRadius: 50,
           backgroundColor: themeColors.bgLight,
           marginHorizontal: 20,
+          marginTop: 10,
         },
         tabBarItemStyle: {
-          // marginTop: 4,
+          // marginTop: 2
         },
       })}
     >
