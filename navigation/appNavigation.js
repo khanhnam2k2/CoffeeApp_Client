@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { themeColors } from "../theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CartScreen from "../screens/CartScreen";
+import ProductDetailScreen from "../screens/ProductDetailScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -26,11 +27,11 @@ export default function AppNavigation() {
           options={{ headerShown: false }}
           component={HomeTabs}
         />
-        {/* <Stack.Screen
-          name="Product"
+        <Stack.Screen
+          name="ProductDetail"
           options={{ headerShown: false }}
-          component={ProductScreen}
-        /> */}
+          component={ProductDetailScreen}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
