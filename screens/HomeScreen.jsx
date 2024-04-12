@@ -7,7 +7,7 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
 import CoffeeCard from "../components/CoffeeCard";
@@ -15,7 +15,11 @@ import GlobalApi from "../api/GlobalApi";
 import { useNavigation } from "@react-navigation/native";
 import CarouselHome from "../components/CarouselHome";
 import Carousel from "react-native-snap-carousel";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+import { AuthContext } from "../context/AuthContext";
 const HomeScreen = () => {
+  const { user, setUser } = useContext(AuthContext);
   const [products, setProducts] = useState([]);
   const [loadingProduct, setLoadingProduct] = useState(false);
 
@@ -40,6 +44,11 @@ const HomeScreen = () => {
       });
   };
 
+  const logout = async () => {
+    await AsyncStorage.removeItem("user");
+    setUser(null);
+    navigation.navigate("Login");
+  };
   return (
     <View className="flex-1  bg-white">
       <StatusBar />
@@ -66,18 +75,24 @@ const HomeScreen = () => {
               </View>
             </View>
           </View>
-          <TouchableOpacity
-            onPress={() => navigation.navigate("cart")}
-            className="relative"
-          >
-            <View
-              className="absolute bottom-5 left-4 rounded-full"
-              style={{ backgroundColor: themeColors.bgDark }}
+          {user ? (
+            <TouchableOpacity
+              onPress={() => navigation.navigate("cart")}
+              className="relative"
             >
-              <Text className="px-1 text-xs text-white">6</Text>
-            </View>
-            <AntDesign name="shoppingcart" size={27} color="black" />
-          </TouchableOpacity>
+              <View
+                className="absolute bottom-5 left-4 rounded-full"
+                style={{ backgroundColor: themeColors.bgDark }}
+              >
+                <Text className="px-1 text-xs text-white">6</Text>
+              </View>
+              <AntDesign name="shoppingcart" size={27} color="black" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+              <Text>Login</Text>
+            </TouchableOpacity>
+          )}
         </View>
         {/* search bar */}
 
@@ -90,7 +105,7 @@ const HomeScreen = () => {
             <Text className="text-2xl font-bold">Best Sellers</Text>
             <TouchableOpacity
               className="p-3 rounded-full shadow bg-gray-300"
-              onPress={() => {}}
+              onPress={() => logout()}
             >
               <Ionicons name="grid" size={24} color="black" />
             </TouchableOpacity>

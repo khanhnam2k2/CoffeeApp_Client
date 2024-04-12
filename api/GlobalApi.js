@@ -6,6 +6,10 @@ const axiosClient = axios.create({
 });
 
 // Gọi API
+// Api Auth
+const login = (userData) => axiosClient.post("/api/login", userData);
+
+const register = (userData) => axiosClient.post("/api/register", userData);
 
 // Api Category
 const getCategoryList = () => axiosClient.get("/api/category");
@@ -26,6 +30,8 @@ const searchProductList = (searchKey) =>
   axiosClient.get("/api/product/search?name=" + searchKey);
 
 export default {
+  login,
+  register,
   getProductList,
   getCategoryList,
   getProductBestSellers,
