@@ -22,7 +22,7 @@ const CategoryCard = ({
         style={{
           backgroundColor: isActive ? themeColors.bgLight : "rgba(0,0,0,0.07)",
         }}
-        className="p-4 px-5 rounded-full mr-2 shadow"
+        className="p-4 px-5 rounded-full shadow"
         onPress={() => handleChangeCategory(isActive ? null : item?._id)}
       >
         <View className="flex-row items-center gap-2">

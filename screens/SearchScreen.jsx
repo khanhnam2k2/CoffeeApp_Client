@@ -1,33 +1,37 @@
 import {
   View,
-  Text,
-  StatusBar,
-  Image,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import CoffeeCard from "../components/CoffeeCard";
 import GlobalApi from "../api/GlobalApi";
 import CategoryCard from "../components/CategoryCard";
-import { useNavigation } from "@react-navigation/native";
+import { debounce } from "lodash";
+import MasonryList from "@react-native-seoul/masonry-list";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 
-const HomeScreen = () => {
+const SearchScreen = () => {
   const [activeCategory, setActiveCategory] = useState("");
   const [categoryList, setCategoryList] = useState([]);
   const [products, setProducts] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
+  const [search, setSearch] = useState("");
+  const searchInputRef = useRef(null);
 
-  const navigation = useNavigation();
+  useFocusEffect(
+    useCallback(() => {
+      searchInputRef.current.focus();
+    }, [])
+  );
 
   useEffect(() => {
     getCategoryList();
-    getProductBestSellers();
   }, []);
 
   // Hàm lấy danh sách danh mục sp
@@ -45,12 +49,14 @@ const HomeScreen = () => {
       });
   };
 
-  // Hàm lấy sản phẩm theo best seller
-  const getProductBestSellers = (activeCategory = null) => {
+  // Hàm lấy sản phẩm
+  const getProductList = (activeCategory = null, text = "") => {
     setLoadingProduct(true);
     const fetchFn = activeCategory
-      ? () => GlobalApi.getProductBestSellerByCategory(activeCategory)
-      : GlobalApi.getProductBestSellers;
+      ? () => GlobalApi.getProductByCategory(activeCategory)
+      : text
+      ? () => GlobalApi.searchProductList(text)
+      : GlobalApi.getProductList;
 
     fetchFn()
       .then((resp) => {
@@ -67,50 +73,68 @@ const HomeScreen = () => {
   // Hàm lấy sản phẩm theo category
   const handleChangeCategory = (categoryId) => {
     setActiveCategory(categoryId);
+    clearSearch();
     setProducts([]);
-    getProductBestSellers(categoryId);
+    getProductList(categoryId);
   };
+
+  // Hàm tìm kiếm sp
+  const handleSearch = (text) => {
+    setSearch(text);
+    if (text.length > 2) {
+      setActiveCategory(null);
+      getProductList(null, text);
+    }
+    if (text == "") {
+      searchInputRef?.current?.clear();
+      setActiveCategory(null);
+      getProductList();
+    }
+  };
+
+  // Hàm xóa ô tìm kiếm
+  const clearSearch = () => {
+    setSearch("");
+    searchInputRef?.current?.clear();
+  };
+
+  const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
   return (
     <View className="flex-1  bg-white">
-      <StatusBar />
-      <Image
-        source={require("../assets/images/beansBackground1.png")}
-        className="w-full absolute -top-5 opacity-10"
-      />
-      <SafeAreaView className="flex-1 pt-4">
-        <View className="px-4 flex-row justify-between items-center">
-          <Image
-            source={require("../assets/images/avatar.png")}
-            className="h-9 w-9 rounded-full"
-          />
-          <View className="flex-row items-center space-x-2">
-            <Feather name="map-pin" size={24} color={themeColors.bgLight} />
-            <Text className="text-base font-semibold">New York, NYC</Text>
-          </View>
-          <Feather name="bell" size={27} color="black" />
-        </View>
+      <View className="flex-1">
         {/* search bar */}
         <View className="mx-5 mt-14">
           <View className="flex-row justify-center items-center  rounded-full p-1 bg-[#e6e6e6]">
             <TextInput
-              value=""
+              onChangeText={handleTextDebounce}
+              ref={searchInputRef}
               placeholder="Tìm kiếm sản phẩm"
               className="p-4 flex-1 font-semibold text-gray-700"
-              onPressIn={() => navigation.navigate("search")}
             />
-            <View
-              className="rounded-full p-2"
-              style={{ backgroundColor: themeColors.bgLight }}
-            >
-              <Feather name="search" size={25} color="white" />
-            </View>
+            {search ? (
+              <TouchableOpacity
+                className="rounded-full p-2"
+                style={{ backgroundColor: themeColors.bgLight }}
+                onPress={() => handleSearch("")}
+              >
+                <Ionicons name="close" size={24} color="white" />
+              </TouchableOpacity>
+            ) : (
+              <View
+                className="rounded-full p-2"
+                style={{ backgroundColor: themeColors.bgLight }}
+              >
+                <Feather name="search" size={25} color="white" />
+              </View>
+            )}
           </View>
         </View>
         {/* categories */}
         <View className="px-5 mt-6">
           {!loadingCategory ? (
             <FlatList
+              contentContainerStyle={{ columnGap: 10 }}
               horizontal
               showsHorizontalScrollIndicator={false}
               data={categoryList}
@@ -125,7 +149,6 @@ const HomeScreen = () => {
                   />
                 );
               }}
-              contentContainerStyle={{ columnGap: 10 }}
               className="overflow-visible"
             />
           ) : (
@@ -146,49 +169,30 @@ const HomeScreen = () => {
         </View>
 
         {/* coffee cards */}
-        <View className=" mt-5 py-2 mx-4">
-          <View className="flex-row items-center justify-between mx-5 mb-4">
-            <Text className="text-2xl font-bold">Best Sellers</Text>
-            <TouchableOpacity
-              className="p-3 rounded-full shadow bg-gray-300"
-              onPress={() => {}}
-            >
-              <Ionicons name="grid" size={24} color="black" />
-            </TouchableOpacity>
-          </View>
+        <View className="flex-1">
           {!loadingProduct ? (
-            <FlatList
+            <MasonryList
+              contentContainerStyle={{
+                paddingVertical: 20,
+                marginHorizontal: 10,
+              }}
               data={products}
               renderItem={({ item, index }) => (
-                <CoffeeCard item={item} index={index} />
+                <CoffeeCard item={item} index={index} isSmallItem={true} />
               )}
-              horizontal
               showsHorizontalScrollIndicator={false}
+              numColumns={2}
               keyExtractor={(item) => item._id}
-              contentContainerStyle={{ columnGap: 20 }}
             />
           ) : (
-            <View className="flex-row items-center gap-4 mx-3">
-              {[1, 2, 3, 4].map((item, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      borderRadius: 40,
-                      backgroundColor: themeColors.bgDark,
-                      height: 350,
-                      width: 250,
-                      marginLeft: 20,
-                    }}
-                  ></View>
-                );
-              })}
+            <View className="flex-1 justify-center items-center gap-4 mx-3">
+              <ActivityIndicator size={50} color={themeColors.bgDark} />
             </View>
           )}
         </View>
-      </SafeAreaView>
+      </View>
     </View>
   );
 };
 
-export default HomeScreen;
+export default SearchScreen;

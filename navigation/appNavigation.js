@@ -1,5 +1,5 @@
 import React from "react";
-import { Entypo, AntDesign, Feather } from "@expo/vector-icons";
+import { Entypo, AntDesign, Feather, FontAwesome5 } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
 import { View, Text, LogBox } from "react-native";
@@ -8,6 +8,7 @@ import { themeColors } from "../theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CartScreen from "../screens/CartScreen";
 import ProductDetailScreen from "../screens/ProductDetailScreen";
+import SearchScreen from "../screens/SearchScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -56,7 +57,7 @@ const HomeTabs = () => {
       })}
     >
       <Tab.Screen name="home" component={HomeScreen} />
-      <Tab.Screen name="favourite" component={HomeScreen} />
+      <Tab.Screen name="search" component={SearchScreen} />
       <Tab.Screen name="cart" component={CartScreen} />
     </Tab.Navigator>
   );
@@ -70,11 +71,11 @@ const menuIcons = (route, focused) => {
     ) : (
       <Feather name="home" size={24} color="white" />
     );
-  } else if (route.name === "favourite") {
+  } else if (route.name === "search") {
     icon = focused ? (
-      <AntDesign name="heart" size={24} color={themeColors.bgLight} />
+      <FontAwesome5 name="search" size={24} color={themeColors.bgLight} />
     ) : (
-      <AntDesign name="hearto" size={24} color="white" />
+      <Feather name="search" size={24} color="white" />
     );
   } else if (route.name === "cart") {
     icon = focused ? (

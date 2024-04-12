@@ -19,6 +19,9 @@ const getProductBestSellers = () =>
 const getProductByCategory = (categoryId) =>
   axiosClient.get("/api/product/" + categoryId);
 
+const getProductBestSellerByCategory = (categoryId) =>
+  axiosClient.get("/api/product/" + categoryId + "/?bestsellers=true");
+
 const searchProductList = (searchKey) =>
   axiosClient.get("/api/product/search?name=" + searchKey);
 
@@ -28,4 +31,5 @@ export default {
   getProductBestSellers,
   getProductByCategory,
   searchProductList,
+  getProductBestSellerByCategory,
 };
