@@ -9,12 +9,7 @@ import { TouchableOpacity } from "react-native";
 const CoffeeCard = ({ item, index, isSmallItem }) => {
   const navigation = useNavigation();
   return (
-    <Animated.View
-      entering={FadeInRight.delay(index * 200)
-        .duration(1000)
-        .springify()
-        .damping(14)}
-    >
+    <Animated.View>
       <TouchableOpacity
         onPress={() => navigation.navigate("ProductDetail", { item })}
         style={{

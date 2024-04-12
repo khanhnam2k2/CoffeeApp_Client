@@ -7,15 +7,15 @@ import {
 } from "react-native";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { themeColors } from "../theme";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, EvilIcons } from "@expo/vector-icons";
 import CoffeeCard from "../components/CoffeeCard";
 import GlobalApi from "../api/GlobalApi";
 import CategoryCard from "../components/CategoryCard";
 import { debounce } from "lodash";
 import MasonryList from "@react-native-seoul/masonry-list";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useFocusEffect } from "@react-navigation/native";
 
-const SearchScreen = () => {
+const SearchScreen = ({ navigation }) => {
   const [activeCategory, setActiveCategory] = useState("");
   const [categoryList, setCategoryList] = useState([]);
   const [products, setProducts] = useState([]);
@@ -104,13 +104,18 @@ const SearchScreen = () => {
     <View className="flex-1  bg-white">
       <View className="flex-1">
         {/* search bar */}
-        <View className="mx-5 mt-14">
-          <View className="flex-row justify-center items-center  rounded-full p-1 bg-[#e6e6e6]">
+        <View className="flex-row items-center mt-4 mx-2">
+          <View>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <EvilIcons name="arrow-left" size={40} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View className="flex-1 flex-row justify-center items-center  rounded-full p-1 bg-[#e6e6e6]">
             <TextInput
               onChangeText={handleTextDebounce}
               ref={searchInputRef}
               placeholder="Tìm kiếm sản phẩm"
-              className="p-4 flex-1 font-semibold text-gray-700"
+              className="p-2 flex-1 font-semibold text-gray-700"
             />
             {search ? (
               <TouchableOpacity

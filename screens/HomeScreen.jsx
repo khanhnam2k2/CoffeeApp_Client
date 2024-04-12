@@ -6,53 +6,29 @@ import {
   SafeAreaView,
   TextInput,
   TouchableOpacity,
-  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { themeColors } from "../theme";
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
 import CoffeeCard from "../components/CoffeeCard";
 import GlobalApi from "../api/GlobalApi";
-import CategoryCard from "../components/CategoryCard";
 import { useNavigation } from "@react-navigation/native";
-
+import CarouselHome from "../components/CarouselHome";
+import Carousel from "react-native-snap-carousel";
 const HomeScreen = () => {
-  const [activeCategory, setActiveCategory] = useState("");
-  const [categoryList, setCategoryList] = useState([]);
   const [products, setProducts] = useState([]);
-  const [loadingCategory, setLoadingCategory] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
 
   const navigation = useNavigation();
 
   useEffect(() => {
-    getCategoryList();
     getProductBestSellers();
   }, []);
 
-  // Hàm lấy danh sách danh mục sp
-  const getCategoryList = () => {
-    setLoadingCategory(true);
-    GlobalApi.getCategoryList()
-      .then((resp) => {
-        setCategoryList(resp?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoadingCategory(false);
-      });
-  };
-
   // Hàm lấy sản phẩm theo best seller
-  const getProductBestSellers = (activeCategory = null) => {
+  const getProductBestSellers = () => {
     setLoadingProduct(true);
-    const fetchFn = activeCategory
-      ? () => GlobalApi.getProductBestSellerByCategory(activeCategory)
-      : GlobalApi.getProductBestSellers;
-
-    fetchFn()
+    GlobalApi.getProductBestSellers()
       .then((resp) => {
         setProducts(resp?.data);
       })
@@ -64,13 +40,6 @@ const HomeScreen = () => {
       });
   };
 
-  // Hàm lấy sản phẩm theo category
-  const handleChangeCategory = (categoryId) => {
-    setActiveCategory(categoryId);
-    setProducts([]);
-    getProductBestSellers(categoryId);
-  };
-
   return (
     <View className="flex-1  bg-white">
       <StatusBar />
@@ -79,75 +48,45 @@ const HomeScreen = () => {
         className="w-full absolute -top-5 opacity-10"
       />
       <SafeAreaView className="flex-1 pt-4">
-        <View className="px-4 flex-row justify-between items-center">
-          <Image
-            source={require("../assets/images/avatar.png")}
-            className="h-9 w-9 rounded-full"
-          />
-          <View className="flex-row items-center space-x-2">
-            <Feather name="map-pin" size={24} color={themeColors.bgLight} />
-            <Text className="text-base font-semibold">New York, NYC</Text>
+        <View className="px-4 flex-row gap-2 items-center">
+          <View className="flex-1 ">
+            <View className="flex-row justify-center items-center rounded-full p-1 pl-2 bg-[#e6e6e6]">
+              <Feather name="search" size={25} color="black" />
+              <TextInput
+                value=""
+                placeholder="Tìm kiếm sản phẩm"
+                className="p-2 flex-1 font-semibold text-gray-700"
+                onPressIn={() => navigation.navigate("search")}
+              />
+              <View
+                className="rounded-full p-2"
+                style={{ backgroundColor: themeColors.bgLight }}
+              >
+                <Feather name="camera" size={25} color="white" />
+              </View>
+            </View>
           </View>
-          <Feather name="bell" size={27} color="black" />
+          <TouchableOpacity
+            onPress={() => navigation.navigate("cart")}
+            className="relative"
+          >
+            <View
+              className="absolute bottom-5 left-4 rounded-full"
+              style={{ backgroundColor: themeColors.bgDark }}
+            >
+              <Text className="px-1 text-xs text-white">6</Text>
+            </View>
+            <AntDesign name="shoppingcart" size={27} color="black" />
+          </TouchableOpacity>
         </View>
         {/* search bar */}
-        <View className="mx-5 mt-14">
-          <View className="flex-row justify-center items-center  rounded-full p-1 bg-[#e6e6e6]">
-            <TextInput
-              value=""
-              placeholder="Tìm kiếm sản phẩm"
-              className="p-4 flex-1 font-semibold text-gray-700"
-              onPressIn={() => navigation.navigate("search")}
-            />
-            <View
-              className="rounded-full p-2"
-              style={{ backgroundColor: themeColors.bgLight }}
-            >
-              <Feather name="search" size={25} color="white" />
-            </View>
-          </View>
-        </View>
-        {/* categories */}
-        <View className="px-5 mt-6">
-          {!loadingCategory ? (
-            <FlatList
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              data={categoryList}
-              keyExtractor={(item) => item._id}
-              renderItem={({ item, index }) => {
-                return (
-                  <CategoryCard
-                    item={item}
-                    index={index}
-                    activeCategory={activeCategory}
-                    handleChangeCategory={handleChangeCategory}
-                  />
-                );
-              }}
-              contentContainerStyle={{ columnGap: 10 }}
-              className="overflow-visible"
-            />
-          ) : (
-            <View className="flex-row items-center gap-4">
-              {[1, 2, 3, 4].map((item, index) => {
-                return (
-                  <View
-                    key={index}
-                    className="w-24 h-12 p-4 px-5 rounded-full mr-2 shadow"
-                    style={{
-                      backgroundColor: "rgba(0,0,0,0.07)",
-                    }}
-                  ></View>
-                );
-              })}
-            </View>
-          )}
-        </View>
+
+        {/* Carousel */}
+        <CarouselHome />
 
         {/* coffee cards */}
-        <View className=" mt-5 py-2 mx-4">
-          <View className="flex-row items-center justify-between mx-5 mb-4">
+        <View className="py-5 mx-4">
+          <View className="flex-row items-center justify-between mx-2 mb-2">
             <Text className="text-2xl font-bold">Best Sellers</Text>
             <TouchableOpacity
               className="p-3 rounded-full shadow bg-gray-300"
@@ -157,33 +96,42 @@ const HomeScreen = () => {
             </TouchableOpacity>
           </View>
           {!loadingProduct ? (
-            <FlatList
+            <Carousel
+              containerCustomStyle={{ overflow: "visible" }}
               data={products}
               renderItem={({ item, index }) => (
                 <CoffeeCard item={item} index={index} />
               )}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              keyExtractor={(item) => item._id}
-              contentContainerStyle={{ columnGap: 20 }}
+              firstItem={1}
+              inactiveSlideOpacity={0.75}
+              inactiveSlideScale={0.77}
+              sliderWidth={400}
+              itemWidth={260}
+              slideStyle={{ display: "flex", alignItems: "center" }}
             />
           ) : (
-            <View className="flex-row items-center gap-4 mx-3">
-              {[1, 2, 3, 4].map((item, index) => {
-                return (
-                  <View
-                    key={index}
-                    style={{
-                      borderRadius: 40,
-                      backgroundColor: themeColors.bgDark,
-                      height: 350,
-                      width: 250,
-                      marginLeft: 20,
-                    }}
-                  ></View>
-                );
-              })}
-            </View>
+            <Carousel
+              containerCustomStyle={{ overflow: "visible" }}
+              data={[1, 2, 3, 4]}
+              renderItem={({ item, index }) => (
+                <View
+                  key={index}
+                  style={{
+                    borderRadius: 40,
+                    backgroundColor: themeColors.bgDark,
+                    height: 350,
+                    width: 250,
+                    marginLeft: 10,
+                  }}
+                ></View>
+              )}
+              firstItem={1}
+              inactiveSlideOpacity={0.75}
+              inactiveSlideScale={0.77}
+              sliderWidth={400}
+              itemWidth={260}
+              slideStyle={{ display: "flex", alignItems: "center" }}
+            />
           )}
         </View>
       </SafeAreaView>
