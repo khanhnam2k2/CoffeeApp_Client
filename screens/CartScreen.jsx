@@ -6,7 +6,11 @@ import {
   Alert,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
-import { AntDesign, Ionicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { themeColors } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { AuthContext } from "../context/AuthContext";
@@ -16,10 +20,10 @@ import MasonryList from "@react-native-seoul/masonry-list";
 
 const CartScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
-  const userParse = JSON.parse(user);
-  const [cartData, setCartData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [cartData, setCartData] = useState([]);
   const [checkedItems, setCheckedItems] = useState({});
+  const [selectAllChecked, setSelectAllChecked] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
 
   useEffect(() => {
@@ -38,7 +42,7 @@ const CartScreen = ({ navigation }) => {
 
   const getCart = () => {
     setLoading(true);
-    GlobalApi.getCart(userParse?._id)
+    GlobalApi.getCart(user?._id)
       .then((resp) => {
         setCartData(resp?.data);
       })
@@ -48,15 +52,32 @@ const CartScreen = ({ navigation }) => {
   };
 
   const handleCheckbox = (itemId) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [itemId]: !prev[itemId],
-    }));
+    setCheckedItems((prev) => {
+      const updatedCheckedItems = {
+        ...prev,
+        [itemId]: !prev[itemId],
+      };
+      // Kiểm tra xem tất cả các sản phẩm đã được chọn hay chưa
+      const allItemsChecked = cartData.items.every(
+        (item) => updatedCheckedItems[item._id]
+      );
+      setSelectAllChecked(allItemsChecked); // Cập nhật trạng thái của ô "Chọn tất cả"
+      return updatedCheckedItems;
+    });
   };
-  // Trong component CartScreen:
+
+  const toggleSelectAll = () => {
+    setSelectAllChecked((prev) => !prev);
+    const newCheckedItems = {};
+    cartData?.items?.forEach((item) => {
+      newCheckedItems[item._id] = !selectAllChecked;
+    });
+    setCheckedItems(newCheckedItems);
+  };
+
   const updateCartItemQuantity = async (itemId, newQuantity) => {
     const data = {
-      userId: userParse?._id,
+      userId: user?._id,
       itemId: itemId,
       quantity: newQuantity,
     };
@@ -92,12 +113,13 @@ const CartScreen = ({ navigation }) => {
 
     try {
       for (const itemId of checkedItemIds) {
-        await GlobalApi.deleteCartItem(userParse?._id, itemId);
+        await GlobalApi.deleteCartItem(user?._id, itemId);
       }
       getCart(); // Sau khi xóa, cập nhật lại dữ liệu giỏ hàng
       setCheckedItems({}); // Đặt lại trạng thái của các sản phẩm đã chọn
+      setSelectAllChecked(false);
     } catch (error) {
-      console.error("Error deleting checked items:", error);
+      console.error("Có lỗi xảy ra. Vui lòng thử lại");
     }
   };
 
@@ -150,18 +172,38 @@ const CartScreen = ({ navigation }) => {
             </View>
           )}
         </View>
-        <View className="mt-10 items-end mb-4">
-          <View className="flex-row gap-3 items-center">
-            <View className="flex-row items-center gap-1">
-              <Text>Tổng thanh toán</Text>
-              <Text>${totalPrice ? totalPrice : 0}</Text>
+        <View className="mt-10 pb-1">
+          <View className="flex-row items-center justify-between">
+            <View className="flex-row items-center">
+              <TouchableOpacity
+                className="flex-row items-center"
+                onPress={toggleSelectAll}
+              >
+                {/* Thêm nút checkbox chọn tất cả */}
+                <MaterialCommunityIcons
+                  name={
+                    selectAllChecked
+                      ? "checkbox-marked"
+                      : "checkbox-blank-outline"
+                  }
+                  size={30}
+                  color={themeColors.bgDark}
+                />
+                <Text>Tất cả</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity
-              className="px-5 py-2"
-              style={{ backgroundColor: themeColors.bgLight }}
-            >
-              <Text className="text-white font-bold text-lg">Mua hàng</Text>
-            </TouchableOpacity>
+            <View className="flex-row gap-2 items-center">
+              <View className="flex-row items-center gap-1">
+                <Text>Tổng thanh toán</Text>
+                <Text>${totalPrice ? totalPrice : 0}</Text>
+              </View>
+              <TouchableOpacity
+                className="px-5 py-2"
+                style={{ backgroundColor: themeColors.bgLight }}
+              >
+                <Text className="text-white font-bold text-lg">Mua hàng</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </SafeAreaView>

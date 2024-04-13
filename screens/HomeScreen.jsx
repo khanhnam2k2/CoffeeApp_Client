@@ -7,27 +7,44 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
 import CoffeeCard from "../components/CoffeeCard";
 import GlobalApi from "../api/GlobalApi";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CarouselHome from "../components/CarouselHome";
 import Carousel from "react-native-snap-carousel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Toast from "react-native-toast-message";
 
 import { AuthContext } from "../context/AuthContext";
 const HomeScreen = () => {
   const { user, setUser } = useContext(AuthContext);
+
   const [products, setProducts] = useState([]);
+  const [cartItemCount, setCartItemCount] = useState();
   const [loadingProduct, setLoadingProduct] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   const navigation = useNavigation();
+
+  useFocusEffect(
+    useCallback(() => {
+      getTotalCartItem();
+    }, [user?._id])
+  );
 
   useEffect(() => {
     getProductBestSellers();
   }, []);
+
+  // Hàm lấy số sp trong giỏ hàng
+  const getTotalCartItem = () => {
+    GlobalApi.getCart(user?._id).then((resp) => {
+      setCartItemCount(resp?.data?.totalQuantity);
+    });
+  };
 
   // Hàm lấy sản phẩm theo best seller
   const getProductBestSellers = () => {
@@ -49,6 +66,33 @@ const HomeScreen = () => {
     setUser(null);
     navigation.navigate("Login");
   };
+
+  // Hàm thêm sp vào giỏ hàng
+  const handleAddToCart = (productId, price) => {
+    setLoader(true);
+    const data = {
+      userId: user?._id,
+      productId: productId,
+      quantity: 1,
+      size: "small",
+      price: price,
+    };
+    GlobalApi.addToCart(data)
+      .then((resp) => {
+        if (resp.data.success) {
+          getTotalCartItem();
+          Toast.show({
+            type: "success",
+            text1: "Thành công",
+            text2: resp.data.message,
+          });
+        }
+      })
+      .finally(() => {
+        setLoader(false);
+      });
+  };
+
   return (
     <View className="flex-1  bg-white">
       <StatusBar />
@@ -84,7 +128,7 @@ const HomeScreen = () => {
                 className="absolute bottom-5 left-4 rounded-full"
                 style={{ backgroundColor: themeColors.bgDark }}
               >
-                <Text className="px-1 text-xs text-white">6</Text>
+                <Text className="px-1 text-xs text-white">{cartItemCount}</Text>
               </View>
               <AntDesign name="shoppingcart" size={27} color="black" />
             </TouchableOpacity>
@@ -115,7 +159,14 @@ const HomeScreen = () => {
               containerCustomStyle={{ overflow: "visible" }}
               data={products}
               renderItem={({ item, index }) => (
-                <CoffeeCard item={item} index={index} />
+                <CoffeeCard
+                  item={item}
+                  index={index}
+                  handleAddToCart={() =>
+                    handleAddToCart(item?._id, item?.price)
+                  }
+                  loader={loader}
+                />
               )}
               firstItem={1}
               inactiveSlideOpacity={0.75}

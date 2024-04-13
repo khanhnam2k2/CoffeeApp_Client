@@ -9,7 +9,8 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkUserLogin = async () => {
       const userLogin = await AsyncStorage.getItem("user");
-      setUser(userLogin);
+      const userLoginParse = JSON.parse(userLogin);
+      setUser(userLoginParse);
     };
     checkUserLogin();
   }, [user]);

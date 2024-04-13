@@ -6,17 +6,69 @@ import {
   Image,
   TouchableOpacity,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useRoute } from "@react-navigation/native";
-import { EvilIcons, AntDesign, FontAwesome, Feather } from "@expo/vector-icons";
+import {
+  EvilIcons,
+  AntDesign,
+  FontAwesome,
+  Feather,
+  FontAwesome6,
+} from "@expo/vector-icons";
 import { themeColors } from "../theme";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
+import { AuthContext } from "../context/AuthContext";
+import GlobalApi from "../api/GlobalApi";
+import Toast from "react-native-toast-message";
 
 const ProductDetailScreen = ({ navigation }) => {
+  const { user } = useContext(AuthContext);
   const route = useRoute();
   const { item } = route.params;
   const [size, setSize] = useState("small");
+  const [quantity, setQuantity] = useState(1);
+  const [price, setPrice] = useState(item?.price);
+
+  // Hàm thay đổi size và giá sp
+  const handleChangeSize = (selectedSize) => {
+    setSize(selectedSize);
+    switch (selectedSize) {
+      case "small":
+        setPrice(parseFloat(item.price));
+        break;
+      case "medium":
+        setPrice(parseFloat(item.price) + 10);
+        break;
+      case "large":
+        setPrice(parseFloat(item.price) + 20);
+        break;
+      default:
+        break;
+    }
+  };
+
+  // Hàm thêm sp vào giỏ hàng
+  const handleAddToCart = (productId) => {
+    const data = {
+      userId: user?._id,
+      productId: productId,
+      quantity: quantity,
+      size: size,
+      price: price,
+    };
+
+    GlobalApi.addToCart(data).then((resp) => {
+      if (resp.data.success) {
+        Toast.show({
+          type: "success",
+          text1: "Thành công",
+          text2: resp.data.message,
+        });
+        navigation.navigate("Cart");
+      }
+    });
+  };
 
   return (
     <ScrollView>
@@ -76,7 +128,7 @@ const ProductDetailScreen = ({ navigation }) => {
               className="text-lg font-semibold"
               style={{ color: themeColors.text }}
             >
-              $ {item?.price}
+              $ {price}
             </Text>
           </Animated.View>
           <Animated.View
@@ -97,7 +149,7 @@ const ProductDetailScreen = ({ navigation }) => {
                   backgroundColor:
                     size == "small" ? themeColors.bgLight : "rgba(0,0,0,0.07)",
                 }}
-                onPress={() => setSize("small")}
+                onPress={() => handleChangeSize("small")}
               >
                 <Text
                   className={size == "small" ? "text-white" : "text-gray-700"}
@@ -111,7 +163,7 @@ const ProductDetailScreen = ({ navigation }) => {
                   backgroundColor:
                     size == "medium" ? themeColors.bgLight : "rgba(0,0,0,0.07)",
                 }}
-                onPress={() => setSize("medium")}
+                onPress={() => handleChangeSize("medium")}
               >
                 <Text
                   className={size == "medium" ? "text-white" : "text-gray-700"}
@@ -125,7 +177,7 @@ const ProductDetailScreen = ({ navigation }) => {
                   backgroundColor:
                     size == "large" ? themeColors.bgLight : "rgba(0,0,0,0.07)",
                 }}
-                onPress={() => setSize("large")}
+                onPress={() => handleChangeSize("large")}
               >
                 <Text
                   className={size == "large" ? "text-white" : "text-gray-700"}
@@ -152,25 +204,27 @@ const ProductDetailScreen = ({ navigation }) => {
             entering={FadeInDown.delay(600).duration(600)}
             className="flex-row justify-between items-center mx-4 mb-2"
           >
-            {/* <View className="flex-row items-center space-x-1">
-              <Text className="text-base text-gray-700 font-semibold opacity-60">
-                Volume
-              </Text>
+            <View className="flex-row items-center space-x-1">
+              <FontAwesome6 name="truck-fast" size={24} color="black" />
               <Text className="text-base text-black font-semibold">
-                {item.volume}
+                Miễn phí
               </Text>
-            </View> */}
-            <View className="flex-row items-center space-x-4 border-gray-500 border rounded-full p-1 px-4">
-              <TouchableOpacity>
+            </View>
+            <View className="flex-row items-center space-x-8 border-gray-500 border rounded-full p-1 px-4">
+              <TouchableOpacity
+                disabled={quantity == 1}
+                style={{ opacity: quantity == 1 ? 0.3 : 1 }}
+                onPress={() => quantity > 1 && setQuantity(quantity - 1)}
+              >
                 <AntDesign name="minus" size={20} color={themeColors.text} />
               </TouchableOpacity>
               <Text
                 className="font-extrabold text-lg"
                 style={{ color: themeColors.text }}
               >
-                2
+                {quantity}
               </Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
                 <AntDesign name="plus" size={20} color={themeColors.text} />
               </TouchableOpacity>
             </View>
@@ -179,7 +233,10 @@ const ProductDetailScreen = ({ navigation }) => {
             entering={FadeInDown.delay(700).duration(600)}
             className="flex-row justify-between mx-4"
           >
-            <TouchableOpacity className="p-4 rounded-full border border-gray-400">
+            <TouchableOpacity
+              onPress={() => handleAddToCart(item?._id)}
+              className="p-4 rounded-full border border-gray-400"
+            >
               <FontAwesome name="shopping-basket" size={25} color="gray" />
             </TouchableOpacity>
             <TouchableOpacity

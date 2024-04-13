@@ -5,7 +5,13 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons, EvilIcons } from "@expo/vector-icons";
 import CoffeeCard from "../components/CoffeeCard";
@@ -14,13 +20,17 @@ import CategoryCard from "../components/CategoryCard";
 import { debounce } from "lodash";
 import MasonryList from "@react-native-seoul/masonry-list";
 import { useFocusEffect } from "@react-navigation/native";
+import Toast from "react-native-toast-message";
+import { AuthContext } from "../context/AuthContext";
 
 const SearchScreen = ({ navigation }) => {
+  const { user } = useContext(AuthContext);
   const [activeCategory, setActiveCategory] = useState("");
   const [categoryList, setCategoryList] = useState([]);
   const [products, setProducts] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
+  const [loader, setLoader] = useState(false);
   const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
 
@@ -88,7 +98,7 @@ const SearchScreen = ({ navigation }) => {
     if (text == "") {
       searchInputRef?.current?.clear();
       setActiveCategory(null);
-      getProductList();
+      setProducts([]);
     }
   };
 
@@ -100,6 +110,31 @@ const SearchScreen = ({ navigation }) => {
 
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
+  // Hàm thêm sản phẩm vào giỏ hàng
+  const handleAddToCart = (productId, price) => {
+    setLoader(true);
+    const data = {
+      userId: user?._id,
+      productId: productId,
+      quantity: 1,
+      size: "small",
+      price: price,
+    };
+    GlobalApi.addToCart(data)
+      .then((resp) => {
+        if (resp.data.success) {
+          Toast.show({
+            type: "success",
+            text1: "Thành công",
+            text2: resp.data.message,
+          });
+          navigation.navigate("Cart");
+        }
+      })
+      .finally(() => {
+        setLoader(false);
+      });
+  };
   return (
     <View className="flex-1  bg-white">
       <View className="flex-1">
@@ -183,7 +218,15 @@ const SearchScreen = ({ navigation }) => {
               }}
               data={products}
               renderItem={({ item, index }) => (
-                <CoffeeCard item={item} index={index} isSmallItem={true} />
+                <CoffeeCard
+                  item={item}
+                  index={index}
+                  isSmallItem={true}
+                  handleAddToCart={() =>
+                    handleAddToCart(item?._id, item?.price)
+                  }
+                  loader={loader}
+                />
               )}
               showsHorizontalScrollIndicator={false}
               numColumns={2}

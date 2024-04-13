@@ -30,6 +30,8 @@ const searchProductList = (searchKey) =>
   axiosClient.get("/api/product/search?name=" + searchKey);
 
 // Api Cart
+const addToCart = (data) => axiosClient.post("/api/cart/addToCart", data);
+
 const getCart = (userId) => axiosClient.get("/api/cart/" + userId);
 
 const updateCartItemQuantity = (data) =>
@@ -49,4 +51,5 @@ export default {
   getCart,
   updateCartItemQuantity,
   deleteCartItem,
+  addToCart,
 };

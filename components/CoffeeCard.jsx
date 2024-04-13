@@ -1,12 +1,12 @@
 import React from "react";
-import { View, Image, Text } from "react-native";
+import { View, Image, Text, ActivityIndicator } from "react-native";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import Animated, { FadeInRight } from "react-native-reanimated";
 
 import { TouchableOpacity } from "react-native";
-const CoffeeCard = ({ item, index, isSmallItem }) => {
+const CoffeeCard = ({ item, index, isSmallItem, handleAddToCart, loader }) => {
   const navigation = useNavigation();
   return (
     <Animated.View>
@@ -63,14 +63,22 @@ const CoffeeCard = ({ item, index, isSmallItem }) => {
               $ {item?.price}
             </Text>
             <TouchableOpacity
-              onPress={() => {}}
+              onPress={handleAddToCart}
               className="p-3 bg-white rounded-full"
+              disabled={loader}
             >
-              <AntDesign
-                name="pluscircleo"
-                size={isSmallItem ? 20 : 25}
-                color={themeColors.bgDark}
-              />
+              {loader ? (
+                <ActivityIndicator
+                  size={isSmallItem ? 20 : 25}
+                  color={themeColors.bgDark}
+                />
+              ) : (
+                <AntDesign
+                  name="pluscircleo"
+                  size={isSmallItem ? 20 : 25}
+                  color={themeColors.bgDark}
+                />
+              )}
             </TouchableOpacity>
           </View>
         </View>
