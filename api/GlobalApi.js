@@ -29,6 +29,14 @@ const getProductBestSellerByCategory = (categoryId) =>
 const searchProductList = (searchKey) =>
   axiosClient.get("/api/product/search?name=" + searchKey);
 
+// Api Cart
+const getCart = (userId) => axiosClient.get("/api/cart/" + userId);
+
+const updateCartItemQuantity = (data) =>
+  axiosClient.put("/api/cart/update", data);
+
+const deleteCartItem = (userId, itemId) =>
+  axiosClient.delete("/api/cart/delete/" + userId + "/" + itemId);
 export default {
   login,
   register,
@@ -38,4 +46,7 @@ export default {
   getProductByCategory,
   searchProductList,
   getProductBestSellerByCategory,
+  getCart,
+  updateCartItemQuantity,
+  deleteCartItem,
 };

@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
       setUser(userLogin);
     };
     checkUserLogin();
-  }, []);
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>

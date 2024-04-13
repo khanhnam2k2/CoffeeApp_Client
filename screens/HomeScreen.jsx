@@ -77,7 +77,7 @@ const HomeScreen = () => {
           </View>
           {user ? (
             <TouchableOpacity
-              onPress={() => navigation.navigate("cart")}
+              onPress={() => navigation.navigate("Cart")}
               className="relative"
             >
               <View
