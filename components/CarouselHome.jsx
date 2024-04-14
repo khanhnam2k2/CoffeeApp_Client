@@ -15,8 +15,8 @@ export default function CarouselHome() {
         dotColor={themeColors.bgDark}
         inactiveDotColor={themeColors.bgLight}
         ImageComponentStyle={{
-          borderRadius: 20,
-          width: "95%",
+          // borderRadius: 20,
+          width: "100%",
           marginTop: 15,
         }}
         autoplay

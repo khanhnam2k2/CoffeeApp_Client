@@ -41,11 +41,11 @@ export default function RegisterScreen({ navigation }) {
     ]);
   };
 
-  // Hàm đăng nhập
+  // Hàm đăng ký
   const handleRegister = async (values) => {
-    console.log(values);
     setLoader(true);
-    GlobalApi.register(values).then((resp) => {
+    try {
+      const resp = await GlobalApi.register(values);
       if (resp.status === 201) {
         Toast.show({
           type: "success",
@@ -61,8 +61,20 @@ export default function RegisterScreen({ navigation }) {
           },
         ]);
       }
+    } catch (error) {
+      Alert.alert(
+        "Lỗi đăng ký",
+        "Đã xảy ra lỗi khi đăng ký, vui lòng thử lại sau",
+        [
+          {
+            text: "Đồng ý",
+            onPress: () => {},
+          },
+        ]
+      );
+    } finally {
       setLoader(false);
-    });
+    }
   };
   return (
     <ScrollView style={{ paddingBottom: 50 }}>

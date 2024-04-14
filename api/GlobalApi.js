@@ -7,38 +7,133 @@ const axiosClient = axios.create({
 
 // Gọi API
 // Api Auth
-const login = (userData) => axiosClient.post("/api/login", userData);
+const login = async (userData) => {
+  try {
+    const response = await axiosClient.post("/api/login", userData);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const register = (userData) => axiosClient.post("/api/register", userData);
+const register = async (userData) => {
+  try {
+    const response = await axiosClient.post("/api/register", userData);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Api Category
-const getCategoryList = () => axiosClient.get("/api/category");
+const getCategoryList = async () => {
+  try {
+    const response = await axiosClient.get("/api/category");
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Api Product
-const getProductList = () => axiosClient.get("/api/product");
+const getProductList = async () => {
+  try {
+    const response = await axiosClient.get("/api/product");
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const getProductBestSellers = () =>
-  axiosClient.get("/api/product?bestsellers=true");
+const getProductBestSellers = async () => {
+  try {
+    const response = await axiosClient.get("/api/product?bestsellers=true");
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const getProductByCategory = (categoryId) =>
-  axiosClient.get("/api/product/" + categoryId);
+const getProductByCategory = async (categoryId) => {
+  try {
+    const response = await axiosClient.get("/api/product/" + categoryId);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const getProductBestSellerByCategory = (categoryId) =>
-  axiosClient.get("/api/product/" + categoryId + "/?bestsellers=true");
+const getProductBestSellerByCategory = async (categoryId) => {
+  try {
+    const response = await axiosClient.get(
+      "/api/product/" + categoryId + "/?bestsellers=true"
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const searchProductList = (searchKey) =>
-  axiosClient.get("/api/product/search?name=" + searchKey);
+const searchProductList = async (searchKey) => {
+  try {
+    const response = await axiosClient.get(
+      "/api/product/search?name=" + searchKey
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // Api Cart
-const addToCart = (data) => axiosClient.post("/api/cart/addToCart", data);
+const addToCart = async (data) => {
+  try {
+    const response = await axiosClient.post("/api/cart/addToCart", data);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const getCart = (userId) => axiosClient.get("/api/cart/" + userId);
+const getCart = async (userId) => {
+  try {
+    const response = await axiosClient.get("/api/cart/" + userId);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const updateCartItemQuantity = (data) =>
-  axiosClient.put("/api/cart/update", data);
+const updateCartItemQuantity = async (data) => {
+  try {
+    const response = await axiosClient.put("/api/cart/update", data);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
-const deleteCartItem = (userId, itemId) =>
-  axiosClient.delete("/api/cart/delete/" + userId + "/" + itemId);
+const deleteCartItem = async (userId, itemId) => {
+  try {
+    const response = await axiosClient.delete(
+      "/api/cart/delete/" + userId + "/" + itemId
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+// Api order
+const createOrder = async (data) => {
+  try {
+    const response = await axiosClient.post("/api/order", data);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export default {
   login,
   register,
@@ -52,4 +147,5 @@ export default {
   updateCartItemQuantity,
   deleteCartItem,
   addToCart,
+  createOrder,
 };

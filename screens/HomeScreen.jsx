@@ -20,12 +20,12 @@ import Toast from "react-native-toast-message";
 
 import { AuthContext } from "../context/AuthContext";
 const HomeScreen = () => {
-  const { user, setUser } = useContext(AuthContext);
+  const { user, setUser, cartItemCount, setCartItemCount } =
+    useContext(AuthContext);
 
   const [products, setProducts] = useState([]);
-  const [cartItemCount, setCartItemCount] = useState();
   const [loadingProduct, setLoadingProduct] = useState(false);
-  const [loader, setLoader] = useState(false);
+  const [loadingItem, setLoadingItem] = useState(false);
 
   const navigation = useNavigation();
 
@@ -40,57 +40,69 @@ const HomeScreen = () => {
   }, []);
 
   // Hàm lấy số sp trong giỏ hàng
-  const getTotalCartItem = () => {
-    GlobalApi.getCart(user?._id).then((resp) => {
-      setCartItemCount(resp?.data?.totalQuantity);
-    });
+  const getTotalCartItem = async () => {
+    if (user) {
+      try {
+        const resp = await GlobalApi.getCart(user?._id);
+        setCartItemCount(resp?.data?.totalQuantity);
+      } catch (error) {
+        console.error("Có lỗi xảy ra");
+      }
+    }
   };
 
   // Hàm lấy sản phẩm theo best seller
-  const getProductBestSellers = () => {
+  const getProductBestSellers = async () => {
     setLoadingProduct(true);
-    GlobalApi.getProductBestSellers()
-      .then((resp) => {
-        setProducts(resp?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoadingProduct(false);
-      });
+    try {
+      const resp = await GlobalApi.getProductBestSellers();
+      setProducts(resp?.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra");
+    } finally {
+      setLoadingProduct(false);
+    }
   };
 
   const logout = async () => {
-    await AsyncStorage.removeItem("user");
-    setUser(null);
-    navigation.navigate("Login");
+    try {
+      await AsyncStorage.removeItem("user");
+      setUser(null);
+      navigation.navigate("Login");
+    } catch (error) {
+      console.error("Có lỗi xảy ra");
+    }
   };
 
   // Hàm thêm sp vào giỏ hàng
-  const handleAddToCart = (productId, price) => {
-    setLoader(true);
-    const data = {
-      userId: user?._id,
-      productId: productId,
-      quantity: 1,
-      size: "small",
-      price: price,
-    };
-    GlobalApi.addToCart(data)
-      .then((resp) => {
-        if (resp.data.success) {
-          getTotalCartItem();
-          Toast.show({
-            type: "success",
-            text1: "Thành công",
-            text2: resp.data.message,
-          });
-        }
-      })
-      .finally(() => {
-        setLoader(false);
+  const handleAddToCart = async (productId, price) => {
+    setLoadingItem(productId);
+    try {
+      const data = {
+        userId: user?._id,
+        productId: productId,
+        quantity: 1,
+        size: "small",
+        price: price,
+      };
+      const response = await GlobalApi.addToCart(data);
+      if (response?.data?.success) {
+        getTotalCartItem();
+        Toast.show({
+          type: "success",
+          text1: "Thành công",
+          text2: response?.data?.message,
+        });
+      }
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
       });
+    } finally {
+      setLoadingItem(null);
+    }
   };
 
   return (
@@ -165,7 +177,7 @@ const HomeScreen = () => {
                   handleAddToCart={() =>
                     handleAddToCart(item?._id, item?.price)
                   }
-                  loader={loader}
+                  loadingItem={loadingItem}
                 />
               )}
               firstItem={1}

@@ -41,15 +41,15 @@ export default function LoginScreen({ navigation }) {
   };
 
   // Hàm đăng nhập
-  const handleLogin = (values) => {
+  const handleLogin = async (values) => {
     setLoader(true);
-    GlobalApi.login(values).then((resp) => {
+    try {
+      const resp = await GlobalApi.login(values);
       if (!resp.data.error) {
-        AsyncStorage.setItem("user", JSON.stringify(resp?.data));
+        await AsyncStorage.setItem("user", JSON.stringify(resp?.data));
         setUser(resp?.data);
         navigation.replace("Home");
       } else {
-        setLoader(false);
         Alert.alert("Lỗi đăng nhập", resp?.data?.error, [
           {
             text: "Đồng ý",
@@ -57,8 +57,22 @@ export default function LoginScreen({ navigation }) {
           },
         ]);
       }
-    });
+    } catch (error) {
+      Alert.alert(
+        "Lỗi đăng nhập",
+        "Đã xảy ra lỗi khi đăng nhập, vui lòng thử lại sau",
+        [
+          {
+            text: "Đồng ý",
+            onPress: () => {},
+          },
+        ]
+      );
+    } finally {
+      setLoader(false);
+    }
   };
+
   return (
     <ScrollView>
       <SafeAreaView className="mx-5">

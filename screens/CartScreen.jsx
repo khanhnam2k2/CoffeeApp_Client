@@ -5,7 +5,7 @@ import {
   ActivityIndicator,
   Alert,
 } from "react-native";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   AntDesign,
   Ionicons,
@@ -17,6 +17,8 @@ import { AuthContext } from "../context/AuthContext";
 import GlobalApi from "../api/GlobalApi";
 import CartItemCard from "../components/CartItemCard";
 import MasonryList from "@react-native-seoul/masonry-list";
+import Toast from "react-native-toast-message";
+import { useFocusEffect } from "@react-navigation/native";
 
 const CartScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
@@ -25,10 +27,23 @@ const CartScreen = ({ navigation }) => {
   const [checkedItems, setCheckedItems] = useState({});
   const [selectAllChecked, setSelectAllChecked] = useState(false);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [checkedItemCount, setCheckedItemCount] = useState(0);
 
   useEffect(() => {
     getCart();
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      if (user) {
+        getCart();
+        setCheckedItems({});
+        setCheckedItemCount(0);
+      } else {
+        setCartData([]);
+      }
+    }, [])
+  );
 
   useEffect(() => {
     const totals = cartData?.items?.reduce((total, item) => {
@@ -40,23 +55,32 @@ const CartScreen = ({ navigation }) => {
     setTotalPrice(totals);
   }, [checkedItems, cartData]);
 
-  const getCart = () => {
+  // Hàm lấy danh sách sp trong giỏ hàng
+  const getCart = async () => {
     setLoading(true);
-    GlobalApi.getCart(user?._id)
-      .then((resp) => {
-        setCartData(resp?.data);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const resp = await GlobalApi.getCart(user?._id);
+      setCartData(resp?.data);
+    } catch (error) {
+      console.error("Có lỗi xảy ra");
+    } finally {
+      setLoading(false);
+    }
   };
 
+  const getCheckedItemCount = (checkedList = checkedItems) => {
+    const checkedItemCounts = Object.values(checkedList).filter(
+      (isChecked) => isChecked
+    ).length;
+    setCheckedItemCount(checkedItemCounts);
+  };
   const handleCheckbox = (itemId) => {
     setCheckedItems((prev) => {
       const updatedCheckedItems = {
         ...prev,
         [itemId]: !prev[itemId],
       };
+      getCheckedItemCount(updatedCheckedItems);
       // Kiểm tra xem tất cả các sản phẩm đã được chọn hay chưa
       const allItemsChecked = cartData.items.every(
         (item) => updatedCheckedItems[item._id]
@@ -70,28 +94,40 @@ const CartScreen = ({ navigation }) => {
     setSelectAllChecked((prev) => !prev);
     const newCheckedItems = {};
     cartData?.items?.forEach((item) => {
-      newCheckedItems[item._id] = !selectAllChecked;
+      newCheckedItems[item?._id] = !selectAllChecked;
     });
     setCheckedItems(newCheckedItems);
   };
 
   const updateCartItemQuantity = async (itemId, newQuantity) => {
-    const data = {
-      userId: user?._id,
-      itemId: itemId,
-      quantity: newQuantity,
-    };
-    GlobalApi.updateCartItemQuantity(data).then((resp) => {
-      getCart(); // Sau khi cập nhật thành công, cập nhật lại dữ liệu giỏ hàng
-    });
+    try {
+      const data = {
+        userId: user?._id,
+        itemId: itemId,
+        quantity: newQuantity,
+      };
+      const resp = await GlobalApi.updateCartItemQuantity(data);
+      if (resp?.data?.success) {
+        Toast.show({
+          type: "success",
+          text1: "Thành công",
+          text2: resp?.data?.message,
+        });
+        getCart();
+      }
+    } catch (error) {
+      console.error("Có lỗi xảy ra");
+    }
   };
 
+  // Hàm tăng sl sp
   const incrementQuantity = (itemId) => {
     const updatedQuantity =
       cartData.items.find((item) => item._id === itemId).quantity + 1;
     updateCartItemQuantity(itemId, updatedQuantity);
   };
 
+  // Hàm giảm sl sp
   const decrementQuantity = (itemId) => {
     const currentQuantity = cartData.items.find(
       (item) => item._id === itemId
@@ -102,6 +138,7 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
+  // Xóa sản phẩm trong giỏ hàng
   const deleteCheckedItems = async () => {
     const checkedItemIds = Object.keys(checkedItems).filter(
       (itemId) => checkedItems[itemId]
@@ -120,6 +157,26 @@ const CartScreen = ({ navigation }) => {
       setSelectAllChecked(false);
     } catch (error) {
       console.error("Có lỗi xảy ra. Vui lòng thử lại");
+    }
+  };
+
+  // Hàm lọc ra các sp được checked
+  const getCheckedItems = () => {
+    return cartData.items.filter((item) => checkedItems[item._id]);
+  };
+
+  // Hàm chuyển hướng đặt hàng
+  const handleCheckout = () => {
+    const checkedItemIds = Object.keys(checkedItems).filter(
+      (itemId) => checkedItems[itemId]
+    );
+
+    if (checkedItemIds.length === 0) {
+      // Nếu không có sản phẩm nào được chọn, hiển thị thông báo lỗi
+      Alert.alert("Lỗi", "Vui lòng chọn sản phẩm để thanh toán");
+    } else {
+      // Nếu có sản phẩm được chọn, chuyển đến màn hình đặt hàng và truyền checkedItems qua navigation
+      navigation.navigate("Checkout", { itemCheckout: getCheckedItems() });
     }
   };
 
@@ -200,8 +257,11 @@ const CartScreen = ({ navigation }) => {
               <TouchableOpacity
                 className="px-5 py-2"
                 style={{ backgroundColor: themeColors.bgLight }}
+                onPress={() => handleCheckout()}
               >
-                <Text className="text-white font-bold text-lg">Mua hàng</Text>
+                <Text className="text-white font-bold text-lg">
+                  Mua hàng ({checkedItemCount})
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

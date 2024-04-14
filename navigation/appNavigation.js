@@ -14,6 +14,7 @@ import LoginScreen from "../screens/LoginScreen";
 import { AuthProvider } from "../context/AuthContext";
 import RegisterScreen from "../screens/RegisterScreen";
 import Toast from "react-native-toast-message";
+import CheckoutScreen from "../screens/CheckoutScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -43,6 +44,11 @@ export default function AppNavigation() {
             name="Cart"
             options={{ headerShown: false }}
             component={CartScreen}
+          />
+          <Stack.Screen
+            name="Checkout"
+            options={{ headerShown: false }}
+            component={CheckoutScreen}
           />
           <Stack.Screen
             name="Login"

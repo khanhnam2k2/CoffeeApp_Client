@@ -6,7 +6,13 @@ import { AntDesign } from "@expo/vector-icons";
 import Animated, { FadeInRight } from "react-native-reanimated";
 
 import { TouchableOpacity } from "react-native";
-const CoffeeCard = ({ item, index, isSmallItem, handleAddToCart, loader }) => {
+const CoffeeCard = ({
+  item,
+  index,
+  isSmallItem,
+  handleAddToCart,
+  loadingItem,
+}) => {
   const navigation = useNavigation();
   return (
     <Animated.View>
@@ -65,9 +71,9 @@ const CoffeeCard = ({ item, index, isSmallItem, handleAddToCart, loader }) => {
             <TouchableOpacity
               onPress={handleAddToCart}
               className="p-3 bg-white rounded-full"
-              disabled={loader}
+              disabled={loadingItem == item?._id}
             >
-              {loader ? (
+              {loadingItem == item?._id ? (
                 <ActivityIndicator
                   size={isSmallItem ? 20 : 25}
                   color={themeColors.bgDark}

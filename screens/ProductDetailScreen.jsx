@@ -49,25 +49,31 @@ const ProductDetailScreen = ({ navigation }) => {
   };
 
   // Hàm thêm sp vào giỏ hàng
-  const handleAddToCart = (productId) => {
-    const data = {
-      userId: user?._id,
-      productId: productId,
-      quantity: quantity,
-      size: size,
-      price: price,
-    };
-
-    GlobalApi.addToCart(data).then((resp) => {
-      if (resp.data.success) {
+  const handleAddToCart = async (productId) => {
+    try {
+      const data = {
+        userId: user?._id,
+        productId: productId,
+        quantity: quantity,
+        size: size,
+        price: price,
+      };
+      const response = await GlobalApi.addToCart(data);
+      if (response?.data?.success) {
         Toast.show({
           type: "success",
           text1: "Thành công",
-          text2: resp.data.message,
+          text2: response?.data?.message,
         });
         navigation.navigate("Cart");
       }
-    });
+    } catch (error) {
+      Toast.show({
+        type: "error",
+        text1: "Lỗi",
+        text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
+      });
+    }
   };
 
   return (
@@ -242,9 +248,14 @@ const ProductDetailScreen = ({ navigation }) => {
             <TouchableOpacity
               className="p-4 rounded-full flex-1 ml-3"
               style={{ backgroundColor: themeColors.bgLight }}
+              onPress={() =>
+                navigation.navigate("Checkout", {
+                  itemCheckout: [{ product: item, quantity, size, price }],
+                })
+              }
             >
               <Text className="text-center text-base font-semibold text-white">
-                Buy now
+                MUA NGAY
               </Text>
             </TouchableOpacity>
           </Animated.View>

@@ -30,7 +30,8 @@ const SearchScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
-  const [loader, setLoader] = useState(false);
+  const [loadingItem, setLoadingItem] = useState(false);
+
   const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
 
@@ -45,55 +46,51 @@ const SearchScreen = ({ navigation }) => {
   }, []);
 
   // Hàm lấy danh sách danh mục sp
-  const getCategoryList = () => {
+  const getCategoryList = async () => {
     setLoadingCategory(true);
-    GlobalApi.getCategoryList()
-      .then((resp) => {
-        setCategoryList(resp?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoadingCategory(false);
-      });
+    try {
+      const resp = await GlobalApi.getCategoryList();
+      setCategoryList(resp?.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingCategory(false);
+    }
   };
 
   // Hàm lấy sản phẩm
-  const getProductList = (activeCategory = null, text = "") => {
+  const getProductList = async (activeCategory = null, text = "") => {
     setLoadingProduct(true);
-    const fetchFn = activeCategory
-      ? () => GlobalApi.getProductByCategory(activeCategory)
-      : text
-      ? () => GlobalApi.searchProductList(text)
-      : GlobalApi.getProductList;
+    try {
+      const fetchFn = activeCategory
+        ? () => GlobalApi.getProductByCategory(activeCategory)
+        : text
+        ? () => GlobalApi.searchProductList(text)
+        : GlobalApi.getProductList;
 
-    fetchFn()
-      .then((resp) => {
-        setProducts(resp?.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setLoadingProduct(false);
-      });
+      const resp = await fetchFn();
+      setProducts(resp?.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingProduct(false);
+    }
   };
 
   // Hàm lấy sản phẩm theo category
-  const handleChangeCategory = (categoryId) => {
+  const handleChangeCategory = async (categoryId) => {
     setActiveCategory(categoryId);
     clearSearch();
     setProducts([]);
-    getProductList(categoryId);
+    await getProductList(categoryId);
   };
 
   // Hàm tìm kiếm sp
-  const handleSearch = (text) => {
+  const handleSearch = async (text) => {
     setSearch(text);
     if (text.length > 2) {
       setActiveCategory(null);
-      getProductList(null, text);
+      await getProductList(null, text);
     }
     if (text == "") {
       searchInputRef?.current?.clear();
@@ -111,29 +108,31 @@ const SearchScreen = ({ navigation }) => {
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
   // Hàm thêm sản phẩm vào giỏ hàng
-  const handleAddToCart = (productId, price) => {
-    setLoader(true);
-    const data = {
-      userId: user?._id,
-      productId: productId,
-      quantity: 1,
-      size: "small",
-      price: price,
-    };
-    GlobalApi.addToCart(data)
-      .then((resp) => {
-        if (resp.data.success) {
-          Toast.show({
-            type: "success",
-            text1: "Thành công",
-            text2: resp.data.message,
-          });
-          navigation.navigate("Cart");
-        }
-      })
-      .finally(() => {
-        setLoader(false);
-      });
+  const handleAddToCart = async (productId, price) => {
+    setLoadingItem(productId);
+
+    try {
+      const data = {
+        userId: user?._id,
+        productId: productId,
+        quantity: 1,
+        size: "small",
+        price: price,
+      };
+      const resp = await GlobalApi.addToCart(data);
+      if (resp.data.success) {
+        Toast.show({
+          type: "success",
+          text1: "Thành công",
+          text2: resp.data.message,
+        });
+        navigation.navigate("Cart");
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoadingItem(null);
+    }
   };
   return (
     <View className="flex-1  bg-white">
@@ -225,7 +224,7 @@ const SearchScreen = ({ navigation }) => {
                   handleAddToCart={() =>
                     handleAddToCart(item?._id, item?.price)
                   }
-                  loader={loader}
+                  loadingItem={loadingItem}
                 />
               )}
               showsHorizontalScrollIndicator={false}
