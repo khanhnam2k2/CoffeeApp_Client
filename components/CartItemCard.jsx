@@ -19,8 +19,8 @@ const CartItemCard = ({
             className="w-6 h-6 rounded border-2 bg-transparent"
             onPress={handleCheckbox}
             style={{
-              backgroundColor: checked ? themeColors.bgLight : "transparent",
-              borderColor: themeColors.bgLight,
+              backgroundColor: checked ? themeColors.bgDark : "transparent",
+              borderColor: themeColors.bgDark,
             }}
           >
             {checked && (

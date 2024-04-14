@@ -14,7 +14,7 @@ import React, {
 } from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons, EvilIcons } from "@expo/vector-icons";
-import CoffeeCard from "../components/CoffeeCard";
+import ProductCard from "../components/ProductCard";
 import GlobalApi from "../api/GlobalApi";
 import CategoryCard from "../components/CategoryCard";
 import { debounce } from "lodash";
@@ -62,14 +62,16 @@ const SearchScreen = ({ navigation }) => {
   const getProductList = async (activeCategory = null, text = "") => {
     setLoadingProduct(true);
     try {
-      const fetchFn = activeCategory
-        ? () => GlobalApi.getProductByCategory(activeCategory)
-        : text
-        ? () => GlobalApi.searchProductList(text)
-        : GlobalApi.getProductList;
-
-      const resp = await fetchFn();
-      setProducts(resp?.data);
+      let resp;
+      if (activeCategory) {
+        resp = await GlobalApi.getProductByCategory(activeCategory);
+        setProducts(resp?.data);
+      } else if (text) {
+        resp = await GlobalApi.searchProductList(text);
+        setProducts(resp?.data);
+      } else {
+        setProducts([]);
+      }
     } catch (error) {
       console.log(error);
     } finally {
@@ -154,7 +156,7 @@ const SearchScreen = ({ navigation }) => {
             {search ? (
               <TouchableOpacity
                 className="rounded-full p-2"
-                style={{ backgroundColor: themeColors.bgLight }}
+                style={{ backgroundColor: themeColors.bgDark }}
                 onPress={() => handleSearch("")}
               >
                 <Ionicons name="close" size={24} color="white" />
@@ -162,7 +164,7 @@ const SearchScreen = ({ navigation }) => {
             ) : (
               <View
                 className="rounded-full p-2"
-                style={{ backgroundColor: themeColors.bgLight }}
+                style={{ backgroundColor: themeColors.bgDark }}
               >
                 <Feather name="search" size={25} color="white" />
               </View>
@@ -217,7 +219,7 @@ const SearchScreen = ({ navigation }) => {
               }}
               data={products}
               renderItem={({ item, index }) => (
-                <CoffeeCard
+                <ProductCard
                   item={item}
                   index={index}
                   isSmallItem={true}

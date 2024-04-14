@@ -76,7 +76,7 @@ const HomeTabs = () => {
         tabBarStyle: {
           marginBottom: 20,
           borderRadius: 50,
-          backgroundColor: themeColors.bgLight,
+          backgroundColor: themeColors.bgDark,
           marginHorizontal: 20,
           marginTop: 10,
         },
@@ -96,19 +96,19 @@ const menuIcons = (route, focused) => {
 
   if (route.name === "home") {
     icon = focused ? (
-      <Entypo name="home" size={24} color={themeColors.bgLight} />
+      <Entypo name="home" size={24} color={themeColors.bgDark} />
     ) : (
       <Feather name="home" size={24} color="white" />
     );
   } else if (route.name === "search") {
     icon = focused ? (
-      <FontAwesome5 name="search" size={24} color={themeColors.bgLight} />
+      <FontAwesome5 name="search" size={24} color={themeColors.bgDark} />
     ) : (
       <Feather name="search" size={24} color="white" />
     );
   } else if (route.name === "profile") {
     icon = focused ? (
-      <FontAwesome5 name="user-alt" size={24} color={themeColors.bgLight} />
+      <FontAwesome5 name="user-alt" size={24} color={themeColors.bgDark} />
     ) : (
       <Feather name="user" size={24} color="white" />
     );

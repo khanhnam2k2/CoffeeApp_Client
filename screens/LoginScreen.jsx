@@ -84,7 +84,7 @@ export default function LoginScreen({ navigation }) {
             <Ionicons
               name="chevron-back-circle"
               size={30}
-              color={themeColors.bgLight}
+              color={themeColors.bgDark}
             />
           </TouchableOpacity>
           <Image
@@ -98,7 +98,7 @@ export default function LoginScreen({ navigation }) {
           />
           <Text
             className="text-center font-extrabold mb-4 text-2xl"
-            style={{ color: themeColors.bgLight }}
+            style={{ color: themeColors.bgDark }}
           >
             Chào mừng bạn đến với chúng tôi
           </Text>
@@ -124,7 +124,7 @@ export default function LoginScreen({ navigation }) {
                     style={{
                       backgroundColor: themeColors.lightWhite,
                       borderColor: touched.email
-                        ? themeColors.bgLight
+                        ? themeColors.bgDark
                         : themeColors.offwhite,
                     }}
                   >
@@ -161,7 +161,7 @@ export default function LoginScreen({ navigation }) {
                     style={{
                       backgroundColor: themeColors.lightWhite,
                       borderColor: touched.password
-                        ? themeColors.bgLight
+                        ? themeColors.bgDark
                         : themeColors.offwhite,
                     }}
                   >
@@ -208,7 +208,7 @@ export default function LoginScreen({ navigation }) {
                   style={{
                     backgroundColor: !isValid
                       ? themeColors.bgGray
-                      : themeColors.bgLight,
+                      : themeColors.bgDark,
                   }}
                 >
                   {!loader ? (

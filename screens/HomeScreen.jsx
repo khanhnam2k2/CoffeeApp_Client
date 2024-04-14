@@ -10,7 +10,7 @@ import {
 import React, { useCallback, useContext, useEffect, useState } from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons, AntDesign } from "@expo/vector-icons";
-import CoffeeCard from "../components/CoffeeCard";
+import ProductCard from "../components/ProductCard";
 import GlobalApi from "../api/GlobalApi";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CarouselHome from "../components/CarouselHome";
@@ -125,7 +125,7 @@ const HomeScreen = () => {
               />
               <View
                 className="rounded-full p-2"
-                style={{ backgroundColor: themeColors.bgLight }}
+                style={{ backgroundColor: themeColors.bgDark }}
               >
                 <Feather name="camera" size={25} color="white" />
               </View>
@@ -171,7 +171,7 @@ const HomeScreen = () => {
               containerCustomStyle={{ overflow: "visible" }}
               data={products}
               renderItem={({ item, index }) => (
-                <CoffeeCard
+                <ProductCard
                   item={item}
                   index={index}
                   handleAddToCart={() =>

@@ -6,7 +6,7 @@ import { AntDesign } from "@expo/vector-icons";
 import Animated, { FadeInRight } from "react-native-reanimated";
 
 import { TouchableOpacity } from "react-native";
-const CoffeeCard = ({
+const ProductCard = ({
   item,
   index,
   isSmallItem,
@@ -39,9 +39,9 @@ const CoffeeCard = ({
           <Image
             source={{ uri: item?.imageUrl }}
             style={{
-              width: isSmallItem ? 100 : 160,
-              height: isSmallItem ? 100 : 160,
-              borderRadius: 40,
+              width: isSmallItem ? 150 : 200,
+              height: isSmallItem ? 100 : 150,
+              borderRadius: 20,
             }}
           />
         </View>
@@ -93,4 +93,4 @@ const CoffeeCard = ({
   );
 };
 
-export default CoffeeCard;
+export default ProductCard;
