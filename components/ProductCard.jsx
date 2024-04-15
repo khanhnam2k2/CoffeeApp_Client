@@ -1,9 +1,10 @@
 import React from "react";
-import { View, Image, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
 import Animated, { FadeInRight } from "react-native-reanimated";
+import { Image } from "expo-image";
 
 import { TouchableOpacity } from "react-native";
 const ProductCard = ({
@@ -43,6 +44,7 @@ const ProductCard = ({
               height: isSmallItem ? 100 : 150,
               borderRadius: 20,
             }}
+            transition={1000}
           />
         </View>
         <View className="px-5 mt-3 space-y-3">

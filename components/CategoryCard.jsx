@@ -1,7 +1,8 @@
-import { View, Text, TouchableOpacity, Image } from "react-native";
+import { View, Text, TouchableOpacity } from "react-native";
 import React from "react";
 import Animated, { FadeInRight } from "react-native-reanimated";
 import { themeColors } from "../theme";
+import { Image } from "expo-image";
 
 const CategoryCard = ({
   item,
@@ -25,7 +26,11 @@ const CategoryCard = ({
         onPress={() => handleChangeCategory(isActive ? null : item?._id)}
       >
         <View className="flex-row items-center gap-2">
-          <Image source={{ uri: item?.icon }} className="w-7 h-7" />
+          <Image
+            source={{ uri: item?.icon }}
+            className="w-7 h-7"
+            transition={1000}
+          />
           <Text
             className="font-semibold"
             style={{ color: isActive ? themeColors.white : themeColors.bgGray }}

@@ -3,7 +3,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Image,
   TextInput,
   Alert,
   ActivityIndicator,
@@ -17,6 +16,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { themeColors } from "../theme";
 import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
+import { Image } from "expo-image";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
@@ -90,15 +90,18 @@ export default function RegisterScreen({ navigation }) {
               color={themeColors.bgDark}
             />
           </TouchableOpacity>
-          <Image
-            source={require("../assets/images/coffee.png")}
-            style={{
-              height: 250,
-              width: 200,
-              resizeMode: "contain",
-              marginBottom: 30,
-            }}
-          />
+          <View className="items-center">
+            <Image
+              source={require("../assets/images/bk.png")}
+              style={{
+                height: 250,
+                width: 200,
+                marginBottom: 30,
+              }}
+              transition={1000}
+              contentFit="contain"
+            />
+          </View>
           <Text
             className="text-center font-extrabold mb-4 text-2xl"
             style={{ color: themeColors.bgDark }}

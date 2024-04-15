@@ -3,7 +3,6 @@ import {
   Text,
   ScrollView,
   StatusBar,
-  Image,
   TouchableOpacity,
 } from "react-native";
 import React, { useContext, useState } from "react";
@@ -21,6 +20,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { AuthContext } from "../context/AuthContext";
 import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
+import { Image } from "expo-image";
 
 const ProductDetailScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
@@ -80,17 +80,17 @@ const ProductDetailScreen = ({ navigation }) => {
     <ScrollView>
       <View className="flex-1">
         <StatusBar style="light" />
-        <Image
-          source={require("../assets/images/beansBackground2.png")}
-          style={{
-            height: 250,
-            borderBottomLeftRadius: 50,
-            borderBottomRightRadius: 50,
-          }}
-          className="w-full absolute"
-        />
-        <SafeAreaView className="space-y-4 pt-2 ">
-          <View className="mx-4 flex-row justify-between items-center">
+        <Animated.View entering={FadeInDown.delay(100).duration(600)}>
+          <Image
+            source={{ uri: item?.imageUrl }}
+            style={{
+              height: 300,
+              borderBottomLeftRadius: 50,
+              borderBottomRightRadius: 50,
+            }}
+            className="w-full"
+          />
+          <View className="w-full absolute p-3  flex-row justify-between items-center">
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <EvilIcons name="arrow-left" size={50} color="white" />
             </TouchableOpacity>
@@ -98,22 +98,12 @@ const ProductDetailScreen = ({ navigation }) => {
               <AntDesign name="heart" size={24} color="white" />
             </TouchableOpacity>
           </View>
-          <Animated.View
-            entering={FadeInDown.delay(100).duration(600)}
-            className="flex-row justify-center"
-            style={{
-              shadowColor: themeColors.bgDark,
-              shadowRadius: 30,
-              shadowOffset: { width: 0, height: 30 },
-              shadowOpacity: 0.9,
-            }}
-          >
-            <Image source={{ uri: item?.imageUrl }} className="h-60 w-60" />
-          </Animated.View>
+        </Animated.View>
+        <SafeAreaView className="space-y-4 pt-2 ">
           <Animated.View
             entering={FadeInDown.delay(200).duration(600)}
             className="flex-row items-center rounded-3xl p-1 px-2 space-x-1 w-16 opacity-90 mx-4"
-            style={{ backgroundColor: themeColors.bgLight }}
+            style={{ backgroundColor: themeColors.bgDark }}
           >
             <AntDesign name="star" size={15} color="white" />
             <Text className="text-base font-semibold text-white">
@@ -153,7 +143,7 @@ const ProductDetailScreen = ({ navigation }) => {
                 className="p-3 px-8 rounded-full"
                 style={{
                   backgroundColor:
-                    size == "small" ? themeColors.bgLight : "rgba(0,0,0,0.07)",
+                    size == "small" ? themeColors.bgDark : "rgba(0,0,0,0.07)",
                 }}
                 onPress={() => handleChangeSize("small")}
               >
@@ -167,7 +157,7 @@ const ProductDetailScreen = ({ navigation }) => {
                 className="p-3 px-8 rounded-full"
                 style={{
                   backgroundColor:
-                    size == "medium" ? themeColors.bgLight : "rgba(0,0,0,0.07)",
+                    size == "medium" ? themeColors.bgDark : "rgba(0,0,0,0.07)",
                 }}
                 onPress={() => handleChangeSize("medium")}
               >
@@ -181,7 +171,7 @@ const ProductDetailScreen = ({ navigation }) => {
                 className="p-3 px-8 rounded-full"
                 style={{
                   backgroundColor:
-                    size == "large" ? themeColors.bgLight : "rgba(0,0,0,0.07)",
+                    size == "large" ? themeColors.bgDark : "rgba(0,0,0,0.07)",
                 }}
                 onPress={() => handleChangeSize("large")}
               >
@@ -247,7 +237,7 @@ const ProductDetailScreen = ({ navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               className="p-4 rounded-full flex-1 ml-3"
-              style={{ backgroundColor: themeColors.bgLight }}
+              style={{ backgroundColor: themeColors.bgDark }}
               onPress={() =>
                 navigation.navigate("Checkout", {
                   itemCheckout: [{ product: item, quantity, size, price }],

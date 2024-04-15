@@ -3,7 +3,6 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Image,
   TextInput,
   Alert,
   ActivityIndicator,
@@ -18,6 +17,7 @@ import { AuthContext } from "../context/AuthContext";
 import { themeColors } from "../theme";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import GlobalApi from "../api/GlobalApi";
+import { Image } from "expo-image";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
@@ -87,15 +87,18 @@ export default function LoginScreen({ navigation }) {
               color={themeColors.bgDark}
             />
           </TouchableOpacity>
-          <Image
-            source={require("../assets/images/coffee.png")}
-            style={{
-              height: 300,
-              width: 200,
-              resizeMode: "contain",
-              marginBottom: 40,
-            }}
-          />
+          <View className="items-center">
+            <Image
+              source={require("../assets/images/bk.png")}
+              style={{
+                height: 300,
+                width: 300,
+                marginBottom: 40,
+              }}
+              contentFit="contain"
+              transition={1000}
+            />
+          </View>
           <Text
             className="text-center font-extrabold mb-4 text-2xl"
             style={{ color: themeColors.bgDark }}
