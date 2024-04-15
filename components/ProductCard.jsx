@@ -8,22 +8,16 @@ import { Image } from "expo-image";
 
 import { TouchableOpacity } from "react-native";
 import { formatCurrency, truncateText } from "../helpers";
-const ProductCard = ({
-  item,
-  index,
-  isSmallItem,
-  handleAddToCart,
-  loadingItem,
-}) => {
+const ProductCard = ({ item, index, isSmallItem }) => {
   const navigation = useNavigation();
   return (
     <Animated.View>
       <TouchableOpacity
         onPress={() => navigation.navigate("ProductDetail", { item })}
+        className="rounded-lg"
         style={{
-          borderRadius: 40,
           backgroundColor: themeColors.bgDark,
-          height: isSmallItem ? 240 : 350,
+          height: isSmallItem ? 230 : 350,
           width: isSmallItem ? 180 : 250,
           marginBottom: 10,
           paddingBottom: 10,
@@ -36,7 +30,7 @@ const ProductCard = ({
             shadowOffset: { width: 0, height: 40 },
             shadowOpacity: 0.8,
           }}
-          className=" flex-row justify-center mt-3"
+          className=" flex-row justify-center pt-1 px-1"
         >
           <Image
             source={
@@ -45,59 +39,39 @@ const ProductCard = ({
                 : null
             }
             style={{
-              width: isSmallItem ? 150 : 200,
-              height: isSmallItem ? 100 : 150,
-              borderRadius: 20,
+              height: isSmallItem ? 100 : 200,
             }}
+            className="rounded-lg w-full"
             transition={1000}
           />
         </View>
-        <View className="px-5 mt-3 space-y-3">
+        <View className="px-5 mt-1 space-y-3">
           <Text
             className=" text-white font-semibold z-10"
             style={{ fontSize: isSmallItem ? 18 : 26 }}
           >
             {truncateText(item?.name, 15)}
           </Text>
-          {!isSmallItem && (
-            <View
-              style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
-              className="flex-row items-center rounded-3xl px-2 space-x-1 w-20"
+          <View
+            style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+            className="flex-row justify-center items-center rounded-3xl px-2 space-x-1 w-14"
+          >
+            <AntDesign name="star" size={15} color="white" />
+            <Text
+              className="font-semibold text-white"
+              style={{ fontSize: isSmallItem ? 12 : 14 }}
             >
-              <AntDesign name="star" size={15} color="white" />
-              <Text className="text-base font-semibold text-white">
-                {item?.rating}
-              </Text>
-            </View>
-          )}
+              {item?.rating}
+            </Text>
+          </View>
 
           <View className="flex-row justify-between items-center">
-            {!isSmallItem ? (
-              <Text className="text-white font-bold text-lg">
-                {!isSmallItem && formatCurrency(item?.price)}đ
-              </Text>
-            ) : (
-              <View></View>
-            )}
-
-            <TouchableOpacity
-              onPress={handleAddToCart}
-              className="p-3 bg-white rounded-full"
-              disabled={loadingItem == item?._id}
+            <Text
+              className="text-white font-bold text-lg"
+              style={{ fontSize: isSmallItem ? 16 : 18 }}
             >
-              {loadingItem == item?._id ? (
-                <ActivityIndicator
-                  size={isSmallItem ? 20 : 25}
-                  color={themeColors.bgDark}
-                />
-              ) : (
-                <AntDesign
-                  name="pluscircleo"
-                  size={isSmallItem ? 20 : 25}
-                  color={themeColors.bgDark}
-                />
-              )}
-            </TouchableOpacity>
+              {formatCurrency(item?.price)}đ
+            </Text>
           </View>
         </View>
       </TouchableOpacity>

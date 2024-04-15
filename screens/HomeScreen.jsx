@@ -26,7 +26,6 @@ const HomeScreen = () => {
 
   const [products, setProducts] = useState([]);
   const [loadingProduct, setLoadingProduct] = useState(false);
-  const [loadingItem, setLoadingItem] = useState(false);
 
   const navigation = useNavigation();
 
@@ -72,41 +71,6 @@ const HomeScreen = () => {
       navigation.navigate("Login");
     } catch (error) {
       console.error("Có lỗi xảy ra");
-    }
-  };
-
-  // Hàm thêm sp vào giỏ hàng
-  const handleAddToCart = async (productId, price) => {
-    if (user) {
-      setLoadingItem(productId);
-      try {
-        const data = {
-          userId: user?._id,
-          productId: productId,
-          quantity: 1,
-          size: "small",
-          price: price,
-        };
-        const response = await GlobalApi.addToCart(data);
-        if (response?.data?.success) {
-          getTotalCartItem();
-          Toast.show({
-            type: "success",
-            text1: "Thành công",
-            text2: response?.data?.message,
-          });
-        }
-      } catch (error) {
-        Toast.show({
-          type: "error",
-          text1: "Lỗi",
-          text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
-        });
-      } finally {
-        setLoadingItem(null);
-      }
-    } else {
-      navigation.navigate("Login");
     }
   };
 
@@ -182,7 +146,6 @@ const HomeScreen = () => {
                   handleAddToCart={() =>
                     handleAddToCart(item?._id, item?.price)
                   }
-                  loadingItem={loadingItem}
                 />
               )}
               layout={"default"}

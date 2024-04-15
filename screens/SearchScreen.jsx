@@ -30,7 +30,6 @@ const SearchScreen = ({ navigation }) => {
   const [products, setProducts] = useState([]);
   const [loadingCategory, setLoadingCategory] = useState(false);
   const [loadingProduct, setLoadingProduct] = useState(false);
-  const [loadingItem, setLoadingItem] = useState(false);
 
   const [search, setSearch] = useState("");
   const searchInputRef = useRef(null);
@@ -109,36 +108,6 @@ const SearchScreen = ({ navigation }) => {
 
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
-  // Hàm thêm sản phẩm vào giỏ hàng
-  const handleAddToCart = async (productId, price) => {
-    if (user) {
-      setLoadingItem(productId);
-      try {
-        const data = {
-          userId: user?._id,
-          productId: productId,
-          quantity: 1,
-          size: "small",
-          price: price,
-        };
-        const resp = await GlobalApi.addToCart(data);
-        if (resp.data.success) {
-          Toast.show({
-            type: "success",
-            text1: "Thành công",
-            text2: resp.data.message,
-          });
-          navigation.navigate("Cart");
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoadingItem(null);
-      }
-    } else {
-      navigation.navigate("Login");
-    }
-  };
   return (
     <View className="flex-1  bg-white">
       <View className="flex-1">
@@ -222,15 +191,7 @@ const SearchScreen = ({ navigation }) => {
               }}
               data={products}
               renderItem={({ item, index }) => (
-                <ProductCard
-                  item={item}
-                  index={index}
-                  isSmallItem={true}
-                  handleAddToCart={() =>
-                    handleAddToCart(item?._id, item?.price)
-                  }
-                  loadingItem={loadingItem}
-                />
+                <ProductCard item={item} index={index} isSmallItem={true} />
               )}
               showsHorizontalScrollIndicator={false}
               numColumns={2}

@@ -4,6 +4,7 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import React, { useContext, useState } from "react";
 import { useRoute } from "@react-navigation/native";
@@ -26,11 +27,13 @@ const ProductDetailScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
   const route = useRoute();
   const { item } = route.params;
+  const [loadingAddToCart, setLoadingAddToCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
   // Hàm thêm sp vào giỏ hàng
   const handleAddToCart = async (productId) => {
     if (user) {
+      setLoadingAddToCart(true);
       try {
         const data = {
           userId: user?._id,
@@ -53,6 +56,8 @@ const ProductDetailScreen = ({ navigation }) => {
           text1: "Lỗi",
           text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
         });
+      } finally {
+        setLoadingAddToCart(false);
       }
     } else {
       navigation.navigate("Login");
@@ -122,7 +127,7 @@ const ProductDetailScreen = ({ navigation }) => {
           </Animated.View>
           <Animated.View
             entering={FadeInDown.delay(500).duration(600)}
-            className="mx-4  mb-6"
+            className="mx-4"
           >
             <View className="mb-3">
               <Text
@@ -157,6 +162,7 @@ const ProductDetailScreen = ({ navigation }) => {
                 disabled={quantity == 1}
                 style={{ opacity: quantity == 1 ? 0.3 : 1 }}
                 onPress={() => quantity > 1 && setQuantity(quantity - 1)}
+                className="p-2"
               >
                 <AntDesign name="minus" size={20} color={themeColors.text} />
               </TouchableOpacity>
@@ -166,7 +172,10 @@ const ProductDetailScreen = ({ navigation }) => {
               >
                 {quantity}
               </Text>
-              <TouchableOpacity onPress={() => setQuantity(quantity + 1)}>
+              <TouchableOpacity
+                className="p-2"
+                onPress={() => setQuantity(quantity + 1)}
+              >
                 <AntDesign name="plus" size={20} color={themeColors.text} />
               </TouchableOpacity>
             </View>
@@ -179,7 +188,11 @@ const ProductDetailScreen = ({ navigation }) => {
               onPress={() => handleAddToCart(item?._id)}
               className="p-4 rounded-full border border-gray-400"
             >
-              <FontAwesome name="shopping-basket" size={25} color="gray" />
+              {loadingAddToCart ? (
+                <ActivityIndicator size={25} color="black" />
+              ) : (
+                <FontAwesome name="shopping-basket" size={25} color="black" />
+              )}
             </TouchableOpacity>
             <TouchableOpacity
               className="p-4 rounded-full flex-1 ml-3"

@@ -5,7 +5,7 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [cartItemCount, setCartItemCount] = useState();
+  const [cartItemCount, setCartItemCount] = useState(0);
 
   useEffect(() => {
     const checkUserLogin = async () => {
