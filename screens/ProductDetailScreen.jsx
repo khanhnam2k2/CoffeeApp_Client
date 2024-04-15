@@ -11,7 +11,6 @@ import {
   EvilIcons,
   AntDesign,
   FontAwesome,
-  Feather,
   FontAwesome6,
 } from "@expo/vector-icons";
 import { themeColors } from "../theme";
@@ -20,59 +19,43 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { AuthContext } from "../context/AuthContext";
 import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
-import { Image } from "expo-image";
+import CarouselHome from "../components/CarouselHome";
+import { formatCurrency } from "../helpers";
 
 const ProductDetailScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
   const route = useRoute();
   const { item } = route.params;
-  const [size, setSize] = useState("small");
   const [quantity, setQuantity] = useState(1);
-  const [price, setPrice] = useState(item?.price);
-
-  // Hàm thay đổi size và giá sp
-  const handleChangeSize = (selectedSize) => {
-    setSize(selectedSize);
-    switch (selectedSize) {
-      case "small":
-        setPrice(parseFloat(item.price));
-        break;
-      case "medium":
-        setPrice(parseFloat(item.price) + 10);
-        break;
-      case "large":
-        setPrice(parseFloat(item.price) + 20);
-        break;
-      default:
-        break;
-    }
-  };
 
   // Hàm thêm sp vào giỏ hàng
   const handleAddToCart = async (productId) => {
-    try {
-      const data = {
-        userId: user?._id,
-        productId: productId,
-        quantity: quantity,
-        size: size,
-        price: price,
-      };
-      const response = await GlobalApi.addToCart(data);
-      if (response?.data?.success) {
+    if (user) {
+      try {
+        const data = {
+          userId: user?._id,
+          productId: productId,
+          quantity: quantity,
+          price: item?.price,
+        };
+        const response = await GlobalApi.addToCart(data);
+        if (response?.data?.success) {
+          Toast.show({
+            type: "success",
+            text1: "Thành công",
+            text2: response?.data?.message,
+          });
+          navigation.navigate("Cart");
+        }
+      } catch (error) {
         Toast.show({
-          type: "success",
-          text1: "Thành công",
-          text2: response?.data?.message,
+          type: "error",
+          text1: "Lỗi",
+          text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
         });
-        navigation.navigate("Cart");
       }
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Lỗi",
-        text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
-      });
+    } else {
+      navigation.navigate("Login");
     }
   };
 
@@ -81,37 +64,32 @@ const ProductDetailScreen = ({ navigation }) => {
       <View className="flex-1">
         <StatusBar style="light" />
         <Animated.View entering={FadeInDown.delay(100).duration(600)}>
-          <Image
-            source={{ uri: item?.imageUrl }}
-            style={{
-              height: 300,
-              borderBottomLeftRadius: 50,
-              borderBottomRightRadius: 50,
-            }}
-            className="w-full"
+          <CarouselHome
+            height={300}
+            marginTop={0}
+            border={20}
+            slides={
+              item?.imagesUrl && item?.imagesUrl.length > 0
+                ? item.imagesUrl
+                : null
+            }
           />
           <View className="w-full absolute p-3  flex-row justify-between items-center">
             <TouchableOpacity onPress={() => navigation.goBack()}>
-              <EvilIcons name="arrow-left" size={50} color="white" />
+              <EvilIcons
+                name="arrow-left"
+                size={50}
+                color={themeColors.bgDark}
+              />
             </TouchableOpacity>
             <TouchableOpacity className="rounded-full border-2 border-white p-2">
-              <AntDesign name="heart" size={24} color="white" />
+              <AntDesign name="heart" size={24} color={themeColors.bgDark} />
             </TouchableOpacity>
           </View>
         </Animated.View>
-        <SafeAreaView className="space-y-4 pt-2 ">
+        <SafeAreaView className="space-y-4 pt-4 ">
           <Animated.View
             entering={FadeInDown.delay(200).duration(600)}
-            className="flex-row items-center rounded-3xl p-1 px-2 space-x-1 w-16 opacity-90 mx-4"
-            style={{ backgroundColor: themeColors.bgDark }}
-          >
-            <AntDesign name="star" size={15} color="white" />
-            <Text className="text-base font-semibold text-white">
-              {item?.rating}
-            </Text>
-          </Animated.View>
-          <Animated.View
-            entering={FadeInDown.delay(300).duration(600)}
             className="mx-4 flex-row justify-between items-center"
           >
             <Text
@@ -120,85 +98,53 @@ const ProductDetailScreen = ({ navigation }) => {
             >
               {item?.name}
             </Text>
-            <Text
-              className="text-lg font-semibold"
-              style={{ color: themeColors.text }}
+            <View
+              className="flex-row items-center justify-center rounded-3xl p-1  space-x-1 w-16 opacity-90 mx-4"
+              style={{ backgroundColor: themeColors.bgDark }}
             >
-              $ {price}
-            </Text>
-          </Animated.View>
-          <Animated.View
-            entering={FadeInDown.delay(400).duration(600)}
-            w
-            className="mx-4 space-y-2"
-          >
-            <Text
-              className="text-lg font-semibold"
-              style={{ color: themeColors.text }}
-            >
-              Coffee size
-            </Text>
-            <View className="flex-row justify-between">
-              <TouchableOpacity
-                className="p-3 px-8 rounded-full"
-                style={{
-                  backgroundColor:
-                    size == "small" ? themeColors.bgDark : "rgba(0,0,0,0.07)",
-                }}
-                onPress={() => handleChangeSize("small")}
-              >
-                <Text
-                  className={size == "small" ? "text-white" : "text-gray-700"}
-                >
-                  Small
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="p-3 px-8 rounded-full"
-                style={{
-                  backgroundColor:
-                    size == "medium" ? themeColors.bgDark : "rgba(0,0,0,0.07)",
-                }}
-                onPress={() => handleChangeSize("medium")}
-              >
-                <Text
-                  className={size == "medium" ? "text-white" : "text-gray-700"}
-                >
-                  Medium
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                className="p-3 px-8 rounded-full"
-                style={{
-                  backgroundColor:
-                    size == "large" ? themeColors.bgDark : "rgba(0,0,0,0.07)",
-                }}
-                onPress={() => handleChangeSize("large")}
-              >
-                <Text
-                  className={size == "large" ? "text-white" : "text-gray-700"}
-                >
-                  Large
-                </Text>
-              </TouchableOpacity>
+              <AntDesign name="star" size={15} color="white" />
+              <Text className="text-base font-semibold text-white">
+                {item?.rating}
+              </Text>
             </View>
           </Animated.View>
           <Animated.View
-            entering={FadeInDown.delay(500).duration(600)}
-            className="mx-4 space-y-2 h-28"
+            entering={FadeInDown.delay(300).duration(600)}
+            className="mx-4 flex-row items-center"
           >
+            <Text className="text-lg font-semibold mr-2">Giá:</Text>
+            <Text
+              className="text-lg font-semibold"
+              style={{ color: themeColors.text }}
+            >
+              {formatCurrency(item?.price)}đ
+            </Text>
+          </Animated.View>
+          <Animated.View
+            entering={FadeInDown.delay(500).duration(600)}
+            className="mx-4  mb-6"
+          >
+            <View className="mb-3">
+              <Text
+                className="text-lg font-semibold mb-2"
+                style={{ color: themeColors.text }}
+              >
+                Chất liệu
+              </Text>
+              <Text className="text-gray-600">{item?.materials}</Text>
+            </View>
             <Text
               style={{ color: themeColors.text }}
-              className="text-lg font-bold"
+              className="text-lg font-bold mb-2"
             >
-              About
+              Mô tả sản phẩm
             </Text>
             <Text className="text-gray-600">{item?.description}</Text>
           </Animated.View>
 
           <Animated.View
             entering={FadeInDown.delay(600).duration(600)}
-            className="flex-row justify-between items-center mx-4 mb-2"
+            className="flex-row justify-between items-center mx-4 mb-4"
           >
             <View className="flex-row items-center space-x-1">
               <FontAwesome6 name="truck-fast" size={24} color="black" />
@@ -240,7 +186,9 @@ const ProductDetailScreen = ({ navigation }) => {
               style={{ backgroundColor: themeColors.bgDark }}
               onPress={() =>
                 navigation.navigate("Checkout", {
-                  itemCheckout: [{ product: item, quantity, size, price }],
+                  itemCheckout: [
+                    { product: item, quantity, size, price: item?.price },
+                  ],
                 })
               }
             >

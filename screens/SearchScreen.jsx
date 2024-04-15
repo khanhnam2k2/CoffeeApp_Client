@@ -111,29 +111,32 @@ const SearchScreen = ({ navigation }) => {
 
   // Hàm thêm sản phẩm vào giỏ hàng
   const handleAddToCart = async (productId, price) => {
-    setLoadingItem(productId);
-
-    try {
-      const data = {
-        userId: user?._id,
-        productId: productId,
-        quantity: 1,
-        size: "small",
-        price: price,
-      };
-      const resp = await GlobalApi.addToCart(data);
-      if (resp.data.success) {
-        Toast.show({
-          type: "success",
-          text1: "Thành công",
-          text2: resp.data.message,
-        });
-        navigation.navigate("Cart");
+    if (user) {
+      setLoadingItem(productId);
+      try {
+        const data = {
+          userId: user?._id,
+          productId: productId,
+          quantity: 1,
+          size: "small",
+          price: price,
+        };
+        const resp = await GlobalApi.addToCart(data);
+        if (resp.data.success) {
+          Toast.show({
+            type: "success",
+            text1: "Thành công",
+            text2: resp.data.message,
+          });
+          navigation.navigate("Cart");
+        }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoadingItem(null);
       }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoadingItem(null);
+    } else {
+      navigation.navigate("Login");
     }
   };
   return (
@@ -198,7 +201,7 @@ const SearchScreen = ({ navigation }) => {
                 return (
                   <View
                     key={index}
-                    className="w-24 h-12 p-4 px-5 rounded-full mr-2 shadow"
+                    className="w-32 h-14 p-4 px-8 rounded-full mr-2 shadow"
                     style={{
                       backgroundColor: "rgba(0,0,0,0.07)",
                     }}

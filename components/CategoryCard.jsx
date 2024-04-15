@@ -22,15 +22,11 @@ const CategoryCard = ({
         style={{
           backgroundColor: isActive ? themeColors.bgDark : "rgba(0,0,0,0.07)",
         }}
-        className="p-4 px-5 rounded-full shadow"
+        className="p-4 px-8 rounded-full shadow"
         onPress={() => handleChangeCategory(isActive ? null : item?._id)}
       >
         <View className="flex-row items-center gap-2">
-          <Image
-            source={{ uri: item?.icon }}
-            className="w-7 h-7"
-            transition={1000}
-          />
+          <Image source={item?.icon} className="w-7 h-7" transition={1000} />
           <Text
             className="font-semibold"
             style={{ color: isActive ? themeColors.white : themeColors.bgGray }}

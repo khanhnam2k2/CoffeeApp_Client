@@ -17,8 +17,9 @@ import CarouselHome from "../components/CarouselHome";
 import Carousel from "react-native-snap-carousel";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
-
 import { AuthContext } from "../context/AuthContext";
+import { slides } from "../constants";
+
 const HomeScreen = () => {
   const { user, setUser, cartItemCount, setCartItemCount } =
     useContext(AuthContext);
@@ -76,32 +77,36 @@ const HomeScreen = () => {
 
   // Hàm thêm sp vào giỏ hàng
   const handleAddToCart = async (productId, price) => {
-    setLoadingItem(productId);
-    try {
-      const data = {
-        userId: user?._id,
-        productId: productId,
-        quantity: 1,
-        size: "small",
-        price: price,
-      };
-      const response = await GlobalApi.addToCart(data);
-      if (response?.data?.success) {
-        getTotalCartItem();
+    if (user) {
+      setLoadingItem(productId);
+      try {
+        const data = {
+          userId: user?._id,
+          productId: productId,
+          quantity: 1,
+          size: "small",
+          price: price,
+        };
+        const response = await GlobalApi.addToCart(data);
+        if (response?.data?.success) {
+          getTotalCartItem();
+          Toast.show({
+            type: "success",
+            text1: "Thành công",
+            text2: response?.data?.message,
+          });
+        }
+      } catch (error) {
         Toast.show({
-          type: "success",
-          text1: "Thành công",
-          text2: response?.data?.message,
+          type: "error",
+          text1: "Lỗi",
+          text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
         });
+      } finally {
+        setLoadingItem(null);
       }
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        text1: "Lỗi",
-        text2: "Đã xảy ra lỗi khi thêm sản phẩm vào giỏ hàng",
-      });
-    } finally {
-      setLoadingItem(null);
+    } else {
+      navigation.navigate("Login");
     }
   };
 
@@ -153,7 +158,7 @@ const HomeScreen = () => {
         {/* search bar */}
 
         {/* Carousel */}
-        <CarouselHome />
+        <CarouselHome slides={slides} />
 
         {/* coffee cards */}
         <View className="py-5 mx-4">
@@ -180,12 +185,13 @@ const HomeScreen = () => {
                   loadingItem={loadingItem}
                 />
               )}
-              firstItem={1}
+              layout={"default"}
               inactiveSlideOpacity={0.75}
               inactiveSlideScale={0.77}
               sliderWidth={400}
               itemWidth={260}
-              slideStyle={{ display: "flex", alignItems: "center" }}
+
+              // slideStyle={{ display: "flex", alignItems: "center" }}
             />
           ) : (
             <Carousel

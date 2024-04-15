@@ -7,6 +7,7 @@ import Animated, { FadeInRight } from "react-native-reanimated";
 import { Image } from "expo-image";
 
 import { TouchableOpacity } from "react-native";
+import { formatCurrency, truncateText } from "../helpers";
 const ProductCard = ({
   item,
   index,
@@ -22,7 +23,7 @@ const ProductCard = ({
         style={{
           borderRadius: 40,
           backgroundColor: themeColors.bgDark,
-          height: isSmallItem ? 230 : 350,
+          height: isSmallItem ? 240 : 350,
           width: isSmallItem ? 180 : 250,
           marginBottom: 10,
           paddingBottom: 10,
@@ -38,7 +39,11 @@ const ProductCard = ({
           className=" flex-row justify-center mt-3"
         >
           <Image
-            source={{ uri: item?.imageUrl }}
+            source={
+              item?.imagesUrl && item?.imagesUrl.length > 0
+                ? item.imagesUrl[0]
+                : null
+            }
             style={{
               width: isSmallItem ? 150 : 200,
               height: isSmallItem ? 100 : 150,
@@ -50,9 +55,9 @@ const ProductCard = ({
         <View className="px-5 mt-3 space-y-3">
           <Text
             className=" text-white font-semibold z-10"
-            style={{ fontSize: isSmallItem ? 18 : 30 }}
+            style={{ fontSize: isSmallItem ? 18 : 26 }}
           >
-            {item?.name}
+            {truncateText(item?.name, 15)}
           </Text>
           {!isSmallItem && (
             <View
@@ -67,9 +72,14 @@ const ProductCard = ({
           )}
 
           <View className="flex-row justify-between items-center">
-            <Text className="text-white font-bold text-lg">
-              $ {item?.price}
-            </Text>
+            {!isSmallItem ? (
+              <Text className="text-white font-bold text-lg">
+                {!isSmallItem && formatCurrency(item?.price)}đ
+              </Text>
+            ) : (
+              <View></View>
+            )}
+
             <TouchableOpacity
               onPress={handleAddToCart}
               className="p-3 bg-white rounded-full"
