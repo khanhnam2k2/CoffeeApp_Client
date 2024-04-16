@@ -15,7 +15,6 @@ import GlobalApi from "../api/GlobalApi";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CarouselHome from "../components/CarouselHome";
 import Carousel from "react-native-snap-carousel";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import Toast from "react-native-toast-message";
 import { AuthContext } from "../context/AuthContext";
 import { slides } from "../constants";
@@ -61,16 +60,6 @@ const HomeScreen = () => {
       console.error("Có lỗi xảy ra");
     } finally {
       setLoadingProduct(false);
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await AsyncStorage.removeItem("user");
-      setUser(null);
-      navigation.navigate("Login");
-    } catch (error) {
-      console.error("Có lỗi xảy ra");
     }
   };
 
@@ -130,7 +119,7 @@ const HomeScreen = () => {
             <Text className="text-2xl font-bold">Best Sellers</Text>
             <TouchableOpacity
               className="p-3 rounded-full shadow bg-gray-300"
-              onPress={() => logout()}
+              onPress={() => {}}
             >
               <Ionicons name="grid" size={24} color="black" />
             </TouchableOpacity>
@@ -163,8 +152,8 @@ const HomeScreen = () => {
               renderItem={({ item, index }) => (
                 <View
                   key={index}
+                  className="rounded-lg"
                   style={{
-                    borderRadius: 40,
                     backgroundColor: themeColors.bgDark,
                     height: 350,
                     width: 250,

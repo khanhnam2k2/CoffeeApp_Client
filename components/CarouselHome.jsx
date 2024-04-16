@@ -23,7 +23,7 @@ export default function CarouselHome({
         }}
         autoplay
         circleLoop
-        imageLoadingColor={themeColors.bgDark}
+        imageLoadingColor="transparent"
       />
     </View>
   );

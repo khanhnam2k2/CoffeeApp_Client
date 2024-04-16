@@ -15,6 +15,7 @@ import { AuthProvider } from "../context/AuthContext";
 import RegisterScreen from "../screens/RegisterScreen";
 import Toast from "react-native-toast-message";
 import CheckoutScreen from "../screens/CheckoutScreen";
+import OrderScreen from "../screens/OrderScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -49,6 +50,11 @@ export default function AppNavigation() {
             name="Checkout"
             options={{ headerShown: false }}
             component={CheckoutScreen}
+          />
+          <Stack.Screen
+            name="Order"
+            options={{ headerShown: false }}
+            component={OrderScreen}
           />
           <Stack.Screen
             name="Login"

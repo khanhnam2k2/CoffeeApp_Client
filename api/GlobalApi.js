@@ -25,6 +25,19 @@ const register = async (userData) => {
   }
 };
 
+// Api user
+const updateProfileUser = async (userId, data) => {
+  try {
+    const response = await axiosClient.put(
+      "/api/user/" + userId + "/updateProfile",
+      data
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // Api Category
 const getCategoryList = async () => {
   try {
@@ -133,10 +146,19 @@ const createOrder = async (data) => {
     console.log(error);
   }
 };
+const getOrderListByStatus = async (status) => {
+  try {
+    const response = await axiosClient.get("/api/order/?status=" + status);
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export default {
   login,
   register,
+  updateProfileUser,
   getProductList,
   getCategoryList,
   getProductBestSellers,
@@ -148,4 +170,5 @@ export default {
   deleteCartItem,
   addToCart,
   createOrder,
+  getOrderListByStatus,
 };
