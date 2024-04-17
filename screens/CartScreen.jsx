@@ -161,7 +161,11 @@ const CartScreen = ({ navigation }) => {
     if (checkedItemIds.length === 0) {
       Alert.alert("Lỗi", "Vui lòng chọn sản phẩm để thanh toán");
     } else {
-      navigation.navigate("Checkout", { itemCheckout: getCheckedItems() });
+      navigation.navigate("Checkout", {
+        itemCheckout: getCheckedItems(),
+        totalPrice: totalPrice,
+        type: "Cart",
+      });
     }
   };
 

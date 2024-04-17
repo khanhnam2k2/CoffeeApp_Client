@@ -202,6 +202,8 @@ const ProductDetailScreen = ({ navigation }) => {
                   itemCheckout: [
                     { product: item, quantity, price: item?.price },
                   ],
+                  totalPrice: item?.price * quantity,
+                  type: "buyNow",
                 })
               }
             >
