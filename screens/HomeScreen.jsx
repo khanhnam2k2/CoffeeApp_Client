@@ -64,13 +64,13 @@ const HomeScreen = () => {
   };
 
   return (
-    <View className="flex-1  bg-white">
+    <SafeAreaView className="flex-1  bg-white pt-4">
       <StatusBar />
       <Image
         source={require("../assets/images/beansBackground1.png")}
         className="w-full absolute -top-5 opacity-10"
       />
-      <SafeAreaView className="flex-1 pt-4">
+      <View className="flex-1 ">
         <View className="px-4 flex-row gap-2 items-center">
           <View className="flex-1 ">
             <View className="flex-row justify-center items-center rounded-full p-1 pl-2 bg-[#e6e6e6]">
@@ -170,8 +170,8 @@ const HomeScreen = () => {
             />
           )}
         </View>
-      </SafeAreaView>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 

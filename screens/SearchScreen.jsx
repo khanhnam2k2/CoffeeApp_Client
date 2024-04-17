@@ -4,6 +4,8 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  SafeAreaView,
+  Platform,
 } from "react-native";
 import React, {
   useCallback,
@@ -109,10 +111,13 @@ const SearchScreen = ({ navigation }) => {
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
   return (
-    <View className="flex-1  bg-white">
+    <SafeAreaView
+      className="flex-1  bg-white"
+      style={{ paddingTop: Platform.OS === "ios" ? 24 : 16 }}
+    >
       <View className="flex-1">
         {/* search bar */}
-        <View className="flex-row items-center mt-4 mx-2">
+        <View className="flex-row items-center  mx-2">
           <View>
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <EvilIcons name="arrow-left" size={40} color="black" />
@@ -204,7 +209,7 @@ const SearchScreen = ({ navigation }) => {
           )}
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

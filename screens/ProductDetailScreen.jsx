@@ -200,7 +200,7 @@ const ProductDetailScreen = ({ navigation }) => {
               onPress={() =>
                 navigation.navigate("Checkout", {
                   itemCheckout: [
-                    { product: item, quantity, size, price: item?.price },
+                    { product: item, quantity, price: item?.price },
                   ],
                 })
               }
