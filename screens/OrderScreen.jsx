@@ -6,6 +6,7 @@ import { themeColors } from "../theme";
 import GlobalApi from "../api/GlobalApi";
 import { formatCurrency } from "../helpers";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { API_URL } from "../config";
 // Hàm gọi API để lấy danh sách đơn hàng dựa trên trạng thái
 const fetchOrdersByStatus = async (status) => {
   try {
@@ -24,7 +25,9 @@ const renderItem = ({ item }) => {
         renderItem={({ item: orderItem }) => (
           <View className="flex-row items-center gap-4">
             <Image
-              source={{ uri: orderItem?.product?.imagesUrl[0] }}
+              source={{
+                uri: API_URL + "/images/" + orderItem?.product?.imagesUrl[0],
+              }}
               className="w-20
                h-20
               "

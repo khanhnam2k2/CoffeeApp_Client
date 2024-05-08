@@ -4,6 +4,7 @@ import { themeColors } from "../theme";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { formatCurrency } from "../helpers";
+import { API_URL } from "../config";
 
 const CartItemCard = ({
   checked,
@@ -31,7 +32,7 @@ const CartItemCard = ({
         </View>
         <View className="border-gray-400 border-2 rounded-lg px-2">
           <Image
-            source={item?.product?.imagesUrl[0]}
+            source={API_URL + "/images/" + item?.product?.imagesUrl[0]}
             className="w-28 h-28"
             contentFit="cover"
             transition={1000}

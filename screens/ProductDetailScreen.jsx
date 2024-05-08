@@ -22,6 +22,7 @@ import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
 import CarouselHome from "../components/CarouselHome";
 import { formatCurrency } from "../helpers";
+import { API_URL } from "../config";
 
 const ProductDetailScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
@@ -71,6 +72,7 @@ const ProductDetailScreen = ({ navigation }) => {
           <StatusBar style="light" />
           <Animated.View entering={FadeInDown.delay(100).duration(600)}>
             <CarouselHome
+              isProduct={true}
               height={300}
               marginTop={0}
               border={20}

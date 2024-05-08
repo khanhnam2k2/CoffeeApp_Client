@@ -112,7 +112,7 @@ const SearchScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView className="flex-1  bg-white">
-      <View className="flex-1">
+      <View className="flex-1 pt-4">
         {/* search bar */}
         <View className="flex-row items-center  mx-2">
           <View>
