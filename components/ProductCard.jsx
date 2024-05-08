@@ -8,6 +8,7 @@ import { Image } from "expo-image";
 
 import { TouchableOpacity } from "react-native";
 import { formatCurrency, truncateText } from "../helpers";
+import { API_URL } from "../config";
 const ProductCard = ({ item, index, isSmallItem }) => {
   const navigation = useNavigation();
   return (
@@ -35,7 +36,7 @@ const ProductCard = ({ item, index, isSmallItem }) => {
           <Image
             source={
               item?.imagesUrl && item?.imagesUrl.length > 0
-                ? item.imagesUrl[0]
+                ? API_URL + "/images/" + item.imagesUrl[0]
                 : null
             }
             style={{

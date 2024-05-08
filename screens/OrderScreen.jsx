@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  FlatList,
-  Image,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
 import { AntDesign } from "@expo/vector-icons";
 import { themeColors } from "../theme";
 import GlobalApi from "../api/GlobalApi";
 import { formatCurrency } from "../helpers";
+import { SafeAreaView } from "react-native-safe-area-context";
 // Hàm gọi API để lấy danh sách đơn hàng dựa trên trạng thái
 const fetchOrdersByStatus = async (status) => {
   try {

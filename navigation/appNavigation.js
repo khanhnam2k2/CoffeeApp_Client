@@ -1,8 +1,7 @@
-import React from "react";
 import { Entypo, Feather, FontAwesome5 } from "@expo/vector-icons";
 import { NavigationContainer } from "@react-navigation/native";
 import HomeScreen from "../screens/HomeScreen";
-import { View, LogBox } from "react-native";
+import { View, LogBox, Platform } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { themeColors } from "../theme";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -84,10 +83,15 @@ const HomeTabs = () => {
           borderRadius: 50,
           backgroundColor: themeColors.bgDark,
           marginHorizontal: 20,
+          // marginBottom: 20,
+          // borderRadius: 50,
+          // backgroundColor: themeColors.bgDark,
+          // marginHorizontal: 20,
           marginTop: 10,
+          ...(Platform.OS === "ios" && { marginTop: 0, paddingBottom: 10 }),
         },
         tabBarItemStyle: {
-          // marginTop: 2
+          ...(Platform.OS === "ios" && { marginBottom: 5 }),
         },
       })}
     >
@@ -122,7 +126,10 @@ const menuIcons = (route, focused) => {
   let buttonClass = focused ? "bg-white" : "";
   return (
     <View
-      className={"flex items-center rounded-full  p-3 shadow " + buttonClass}
+      className={
+        "flex items-center justify-center rounded-full  p-3 shadow " +
+        buttonClass
+      }
     >
       {icon}
     </View>

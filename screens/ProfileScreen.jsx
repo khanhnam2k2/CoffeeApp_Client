@@ -15,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ProfileScreen = () => {
   const { user, setUser } = useContext(AuthContext);
@@ -75,7 +76,7 @@ const ProfileScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white">
       <StatusBar />
       <View
         className="py-4 mb-4 pb-10"
@@ -174,7 +175,7 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

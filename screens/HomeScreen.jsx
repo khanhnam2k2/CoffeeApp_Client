@@ -3,7 +3,6 @@ import {
   Text,
   StatusBar,
   Image,
-  SafeAreaView,
   TextInput,
   TouchableOpacity,
 } from "react-native";
@@ -18,6 +17,7 @@ import Carousel from "react-native-snap-carousel";
 import Toast from "react-native-toast-message";
 import { AuthContext } from "../context/AuthContext";
 import { slides } from "../constants";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
   const { user, setUser, cartItemCount, setCartItemCount } =
@@ -55,6 +55,7 @@ const HomeScreen = () => {
     setLoadingProduct(true);
     try {
       const resp = await GlobalApi.getProductBestSellers();
+      console.log(resp.data);
       setProducts(resp?.data);
     } catch (error) {
       console.error("Có lỗi xảy ra");

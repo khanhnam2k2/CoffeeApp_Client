@@ -111,10 +111,7 @@ const SearchScreen = ({ navigation }) => {
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
   return (
-    <SafeAreaView
-      className="flex-1  bg-white"
-      style={{ paddingTop: Platform.OS === "ios" ? 24 : 16 }}
-    >
+    <SafeAreaView className="flex-1  bg-white">
       <View className="flex-1">
         {/* search bar */}
         <View className="flex-row items-center  mx-2">
