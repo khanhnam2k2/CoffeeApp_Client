@@ -146,9 +146,11 @@ const createOrder = async (data) => {
     console.log(error);
   }
 };
-const getOrderListByStatus = async (status) => {
+const getOrderListByStatus = async (userId, status) => {
   try {
-    const response = await axiosClient.get("/api/order/?status=" + status);
+    const response = await axiosClient.get(
+      "/api/order/" + userId + "/?status=" + status
+    );
     return response;
   } catch (error) {
     console.log(error);

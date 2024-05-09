@@ -7,16 +7,9 @@ import GlobalApi from "../api/GlobalApi";
 import { formatCurrency } from "../helpers";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
-// Hàm gọi API để lấy danh sách đơn hàng dựa trên trạng thái
-const fetchOrdersByStatus = async (status) => {
-  try {
-    const response = await GlobalApi.getOrderListByStatus(status);
-    return response?.data;
-  } catch (error) {
-    console.error("Lỗi", error);
-    return [];
-  }
-};
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+
 const renderItem = ({ item }) => {
   return (
     <View className="mb-4 border-2 p-3 ">
@@ -93,6 +86,17 @@ const CompletedOrdersScreen = ({ orders }) => {
 };
 
 const OrderScreen = ({ navigation }) => {
+  const { user } = useContext(AuthContext);
+  // Hàm gọi API để lấy danh sách đơn hàng dựa trên trạng thái
+  const fetchOrdersByStatus = async (status) => {
+    try {
+      const response = await GlobalApi.getOrderListByStatus(user?._id, status);
+      return response?.data;
+    } catch (error) {
+      console.error("Lỗi", error);
+      return [];
+    }
+  };
   const [index, setIndex] = useState(0); // Chỉ số của tab hiện tại
   const [routes] = useState([
     { key: "pending", title: "Chờ xác nhận" },
