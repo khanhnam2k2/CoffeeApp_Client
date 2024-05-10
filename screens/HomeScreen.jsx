@@ -55,7 +55,6 @@ const HomeScreen = () => {
     setLoadingProduct(true);
     try {
       const resp = await GlobalApi.getProductBestSellers();
-      console.log(resp.data);
       setProducts(resp?.data);
     } catch (error) {
       console.error("Có lỗi xảy ra");
