@@ -156,7 +156,14 @@ const getOrderListByStatus = async (userId, status) => {
     console.log(error);
   }
 };
-
+const getTotalOrders = async (userId) => {
+  try {
+    const response = await axiosClient.get("/api/order/totalOrder/" + userId);
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 export default {
   login,
   register,
@@ -173,4 +180,5 @@ export default {
   addToCart,
   createOrder,
   getOrderListByStatus,
+  getTotalOrders,
 };

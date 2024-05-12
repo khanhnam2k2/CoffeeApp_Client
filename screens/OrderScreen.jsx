@@ -9,6 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useRoute } from "@react-navigation/native";
 
 const renderItem = ({ item }) => {
   return (
@@ -86,6 +87,7 @@ const CompletedOrdersScreen = ({ orders }) => {
 };
 
 const OrderScreen = ({ navigation }) => {
+  const route = useRoute();
   const { user } = useContext(AuthContext);
   // Hàm gọi API để lấy danh sách đơn hàng dựa trên trạng thái
   const fetchOrdersByStatus = async (status) => {
@@ -97,7 +99,7 @@ const OrderScreen = ({ navigation }) => {
       return [];
     }
   };
-  const [index, setIndex] = useState(0); // Chỉ số của tab hiện tại
+  const [index, setIndex] = useState(route.params?.tabIndex || 0); // Chỉ số của tab hiện tại
   const [routes] = useState([
     { key: "pending", title: "Chờ xác nhận" },
     { key: "shipping", title: "Đang giao" },

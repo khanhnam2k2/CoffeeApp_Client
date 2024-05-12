@@ -1,17 +1,10 @@
-import {
-  View,
-  Text,
-  StatusBar,
-  Image,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
-import React, { useContext, useState } from "react";
+import { View, Text, StatusBar, Image, TouchableOpacity } from "react-native";
+import React, { useCallback, useContext, useState } from "react";
 import { Feather, MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
 import { themeColors } from "../theme";
 import { AuthContext } from "../context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
@@ -20,8 +13,29 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const ProfileScreen = () => {
   const { user, setUser } = useContext(AuthContext);
   const [avatar, setAvatar] = useState(user?.avatar);
+  const [totalOrders, setTotalOrders] = useState({
+    pending: 0,
+    delivering: 0,
+    complete: 0,
+  });
 
   const navigation = useNavigation();
+
+  const getTotalOrders = async () => {
+    try {
+      const response = await GlobalApi.getTotalOrders(user?._id);
+      if (response.status === 200) {
+        setTotalOrders(response.data);
+      }
+    } catch (error) {}
+  };
+
+  useFocusEffect(
+    useCallback(() => {
+      getTotalOrders();
+    }, [user?._id])
+  );
+
   const logout = async () => {
     try {
       await AsyncStorage.removeItem("user");
@@ -161,17 +175,74 @@ const ProfileScreen = () => {
           </TouchableOpacity>
         </View>
         <View className="flex-row items-center justify-between mt-10">
-          <TouchableOpacity className=" items-center">
-            <MaterialCommunityIcons name="truck-fast" size={40} color="black" />
-            <Text className="text-xs">Chờ xác nhận</Text>
+          <TouchableOpacity
+            className=" items-center"
+            onPress={() => navigation.navigate("Order", { tabIndex: 0 })}
+          >
+            <View className="relative">
+              <MaterialCommunityIcons
+                name="truck-fast"
+                size={40}
+                color="black"
+              />
+              {totalOrders?.pending > 0 && (
+                <View
+                  className="absolute -top-1 -right-3 px-2 rounded-full"
+                  style={{ backgroundColor: themeColors.bgDark }}
+                >
+                  <Text className="text-white font-bold">
+                    {totalOrders?.pending}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <Text className="text-sm font-semibold">Chờ xác nhận</Text>
           </TouchableOpacity>
-          <TouchableOpacity className=" items-center">
-            <MaterialCommunityIcons name="truck-fast" size={40} color="black" />
-            <Text className="text-xs">Đang giao</Text>
+          <TouchableOpacity
+            className=" items-center"
+            onPress={() => navigation.navigate("Order", { tabIndex: 1 })}
+          >
+            <View className="relative">
+              <MaterialCommunityIcons
+                name="truck-fast"
+                size={40}
+                color="black"
+              />
+              {totalOrders?.delivering > 0 && (
+                <View
+                  className="absolute -top-1 -right-3 px-2 rounded-full"
+                  style={{ backgroundColor: themeColors.bgDark }}
+                >
+                  <Text className="text-white font-bold">
+                    {totalOrders?.delivering}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <Text className="text-sm font-semibold">Đang giao </Text>
           </TouchableOpacity>
-          <TouchableOpacity className=" items-center">
-            <MaterialCommunityIcons name="truck-fast" size={40} color="black" />
-            <Text className="text-xs">Hoàn thành</Text>
+          <TouchableOpacity
+            className=" items-center"
+            onPress={() => navigation.navigate("Order", { tabIndex: 2 })}
+          >
+            <View className="relative">
+              <MaterialCommunityIcons
+                name="truck-fast"
+                size={40}
+                color="black"
+              />
+              {totalOrders?.complete > 0 && (
+                <View
+                  className="absolute -top-1 -right-3 px-2 rounded-full"
+                  style={{ backgroundColor: themeColors.bgDark }}
+                >
+                  <Text className="text-white font-bold">
+                    {totalOrders?.complete}
+                  </Text>
+                </View>
+              )}
+            </View>
+            <Text className="text-sm font-semibold">Hoàn thành </Text>
           </TouchableOpacity>
         </View>
       </View>
