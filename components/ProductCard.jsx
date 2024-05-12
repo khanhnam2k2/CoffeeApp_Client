@@ -49,7 +49,7 @@ const ProductCard = ({ item, index, isSmallItem }) => {
         <View className="px-5 mt-1 space-y-3">
           <Text
             className=" text-white font-semibold z-10"
-            style={{ fontSize: isSmallItem ? 18 : 26 }}
+            style={{ fontSize: isSmallItem ? 18 : 24 }}
           >
             {truncateText(item?.name, 15)}
           </Text>

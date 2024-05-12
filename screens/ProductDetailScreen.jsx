@@ -49,7 +49,7 @@ const ProductDetailScreen = ({ navigation }) => {
             text1: "Thành công",
             text2: response?.data?.message,
           });
-          navigation.navigate("Cart");
+          // navigation.navigate("Cart");
         }
       } catch (error) {
         Toast.show({
