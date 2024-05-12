@@ -1,6 +1,12 @@
 import { View, Text, StatusBar, Image, TouchableOpacity } from "react-native";
 import React, { useCallback, useContext, useState } from "react";
-import { Feather, MaterialCommunityIcons, AntDesign } from "@expo/vector-icons";
+import {
+  Feather,
+  MaterialCommunityIcons,
+  AntDesign,
+  FontAwesome5,
+  MaterialIcons,
+} from "@expo/vector-icons";
 import { themeColors } from "../theme";
 import { AuthContext } from "../context/AuthContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -180,11 +186,7 @@ const ProfileScreen = () => {
             onPress={() => navigation.navigate("Order", { tabIndex: 0 })}
           >
             <View className="relative">
-              <MaterialCommunityIcons
-                name="truck-fast"
-                size={40}
-                color="black"
-              />
+              <FontAwesome5 name="box-open" size={40} color="black" />
               {totalOrders?.pending > 0 && (
                 <View
                   className="absolute -top-1 -right-3 px-2 rounded-full"
@@ -226,11 +228,7 @@ const ProfileScreen = () => {
             onPress={() => navigation.navigate("Order", { tabIndex: 2 })}
           >
             <View className="relative">
-              <MaterialCommunityIcons
-                name="truck-fast"
-                size={40}
-                color="black"
-              />
+              <MaterialIcons name="done" size={40} color="black" />
               {totalOrders?.complete > 0 && (
                 <View
                   className="absolute -top-1 -right-3 px-2 rounded-full"

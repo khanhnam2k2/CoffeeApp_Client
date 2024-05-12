@@ -3,17 +3,10 @@ import {
   TextInput,
   TouchableOpacity,
   FlatList,
-  ActivityIndicator,
   SafeAreaView,
-  Platform,
+  Text,
 } from "react-native";
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { themeColors } from "../theme";
 import { Feather, Ionicons, EvilIcons } from "@expo/vector-icons";
 import ProductCard from "../components/ProductCard";
@@ -22,11 +15,10 @@ import CategoryCard from "../components/CategoryCard";
 import { debounce } from "lodash";
 import MasonryList from "@react-native-seoul/masonry-list";
 import { useFocusEffect } from "@react-navigation/native";
-import Toast from "react-native-toast-message";
-import { AuthContext } from "../context/AuthContext";
+import Searching from "../components/common/Searching";
+import Empty from "../components/common/Empty";
 
 const SearchScreen = ({ navigation }) => {
-  const { user } = useContext(AuthContext);
   const [activeCategory, setActiveCategory] = useState("");
   const [categoryList, setCategoryList] = useState([]);
   const [products, setProducts] = useState([]);
@@ -186,22 +178,35 @@ const SearchScreen = ({ navigation }) => {
         {/* coffee cards */}
         <View className="flex-1">
           {!loadingProduct ? (
-            <MasonryList
-              contentContainerStyle={{
-                paddingVertical: 20,
-                marginHorizontal: 10,
-              }}
-              data={products}
-              renderItem={({ item, index }) => (
-                <ProductCard item={item} index={index} isSmallItem={true} />
-              )}
-              showsHorizontalScrollIndicator={false}
-              numColumns={2}
-              keyExtractor={(item) => item._id}
-            />
+            products.length > 0 ? (
+              <MasonryList
+                contentContainerStyle={{
+                  paddingVertical: 20,
+                  marginHorizontal: 10,
+                }}
+                data={products}
+                renderItem={({ item, index }) => (
+                  <ProductCard item={item} index={index} isSmallItem={true} />
+                )}
+                showsHorizontalScrollIndicator={false}
+                numColumns={2}
+                keyExtractor={(item) => item._id}
+              />
+            ) : search.length > 0 ? (
+              <View
+                style={{
+                  flex: 1,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Empty />
+                <Text className="mt-3 text-base">Không có sản phẩm nào</Text>
+              </View>
+            ) : null
           ) : (
             <View className="flex-1 justify-center items-center gap-4 mx-3">
-              <ActivityIndicator size={50} color={themeColors.bgDark} />
+              <Searching />
             </View>
           )}
         </View>
