@@ -1,4 +1,11 @@
-import { View, Text, StatusBar, Image, TouchableOpacity } from "react-native";
+import {
+  View,
+  Text,
+  StatusBar,
+  Image,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import React, { useCallback, useContext, useState } from "react";
 import {
   Feather,
@@ -44,9 +51,27 @@ const ProfileScreen = () => {
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem("user");
-      setUser(null);
-      navigation.navigate("Login");
+      Alert.alert(
+        "Xác nhận",
+        "Bạn có chắc chắn muốn đăng xuất?",
+        [
+          {
+            text: "Hủy",
+            onPress: () => console.log("Đã hủy đăng xuất"),
+            style: "cancel",
+          },
+          {
+            text: "Đồng ý",
+            onPress: async () => {
+              // Thực hiện logic đăng xuất
+              await AsyncStorage.removeItem("user");
+              setUser(null);
+              navigation.navigate("Login");
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     } catch (error) {
       console.error("Có lỗi xảy ra");
     }
