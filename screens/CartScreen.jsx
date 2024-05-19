@@ -20,6 +20,7 @@ import MasonryList from "@react-native-seoul/masonry-list";
 import Toast from "react-native-toast-message";
 import { useFocusEffect } from "@react-navigation/native";
 import { formatCurrency } from "../helpers";
+import Empty from "../components/common/Empty";
 
 const CartScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
@@ -140,18 +141,29 @@ const CartScreen = ({ navigation }) => {
       return;
     }
 
-    try {
-      await Promise.all(
-        checkedItemIds.map((itemId) =>
-          GlobalApi.deleteCartItem(user?._id, itemId)
-        )
-      );
-      getCart();
-      setCheckedItems({});
-      setSelectAllChecked(false);
-    } catch (error) {
-      console.error("Có lỗi xảy ra. Vui lòng thử lại");
-    }
+    Alert.alert("Xác nhận", "Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?", [
+      {
+        text: "Hủy",
+        style: "cancel",
+      },
+      {
+        text: "Đồng ý",
+        onPress: async () => {
+          try {
+            await Promise.all(
+              checkedItemIds.map((itemId) =>
+                GlobalApi.deleteCartItem(user?._id, itemId)
+              )
+            );
+            getCart();
+            setCheckedItems({});
+            setSelectAllChecked(false);
+          } catch (error) {
+            console.error("Có lỗi xảy ra. Vui lòng thử lại");
+          }
+        },
+      },
+    ]);
   };
 
   const handleCheckout = () => {
@@ -195,30 +207,35 @@ const CartScreen = ({ navigation }) => {
           </TouchableOpacity>
         </View>
         <View className="flex-1 mt-10">
-          {loading ? (
-            <ActivityIndicator size={30} color={themeColors.bgDark} />
-          ) : cartData && cartData.items && cartData.items.length ? (
-            <View className="flex-1">
-              <MasonryList
-                data={cartData.items}
-                numColumns={1}
-                keyExtractor={(item) => item._id}
-                showsVerticalScrollIndicator={false}
-                renderItem={({ item, index }) => (
-                  <CartItemCard
-                    checked={checkedItems[item?._id]}
-                    handleCheckbox={() => handleCheckbox(item?._id)}
-                    item={item}
-                    incrementQuantity={() => incrementQuantity(item?._id)}
-                    decrementQuantity={() => decrementQuantity(item?._id)}
-                  />
-                )}
-              />
-            </View>
+          {!loading ? (
+            cartData && cartData.items && cartData.items.length ? (
+              <View className="flex-1">
+                <MasonryList
+                  data={cartData.items}
+                  numColumns={1}
+                  keyExtractor={(item) => item._id}
+                  showsVerticalScrollIndicator={false}
+                  renderItem={({ item, index }) => (
+                    <CartItemCard
+                      checked={checkedItems[item?._id]}
+                      handleCheckbox={() => handleCheckbox(item?._id)}
+                      item={item}
+                      incrementQuantity={() => incrementQuantity(item?._id)}
+                      decrementQuantity={() => decrementQuantity(item?._id)}
+                    />
+                  )}
+                />
+              </View>
+            ) : (
+              <View className="flex-1 justify-center items-center gap-4 mx-3">
+                <Empty />
+                <Text className="mt-3 text-base">
+                  Giỏ hàng của bạn đang trống
+                </Text>
+              </View>
+            )
           ) : (
-            <View>
-              <Text>asdsa</Text>
-            </View>
+            <ActivityIndicator size={30} color={themeColors.bgDark} />
           )}
         </View>
         <View className="mt-10 pb-1">
