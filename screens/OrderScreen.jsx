@@ -12,6 +12,7 @@ import { useRoute } from "@react-navigation/native";
 import Empty from "../components/common/Empty";
 import Searching from "../components/common/Searching";
 
+// Hiển thị các sp trong đơn hàng
 const renderItem = ({ item }) => {
   return (
     <View className="mb-4 border-2 p-3 ">
@@ -142,7 +143,6 @@ const OrderScreen = ({ navigation }) => {
       return response?.data;
     } catch (error) {
       console.error("Lỗi", error);
-      return [];
     }
   };
 
@@ -221,13 +221,6 @@ const OrderScreen = ({ navigation }) => {
             </TouchableOpacity>
             <Text className="text-xl">Đơn mua</Text>
           </View>
-          {/* <TouchableOpacity>
-            <Ionicons
-              name="trash-outline"
-              size={30}
-              color={themeColors.bgDark}
-            />
-          </TouchableOpacity> */}
         </View>
         <TabView
           navigationState={{ index, routes }}

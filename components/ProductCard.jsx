@@ -3,14 +3,16 @@ import { View, Text, ActivityIndicator } from "react-native";
 import { themeColors } from "../theme";
 import { useNavigation } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
-import Animated, { FadeInRight } from "react-native-reanimated";
+import Animated from "react-native-reanimated";
 import { Image } from "expo-image";
 
 import { TouchableOpacity } from "react-native";
 import { formatCurrency, truncateText } from "../helpers";
 import { API_URL } from "../config";
+
 const ProductCard = ({ item, index, isSmallItem }) => {
   const navigation = useNavigation();
+
   return (
     <Animated.View>
       <TouchableOpacity

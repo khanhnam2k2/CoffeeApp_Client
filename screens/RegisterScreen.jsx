@@ -31,6 +31,7 @@ const validationSchema = Yup.object().shape({
 export default function RegisterScreen({ navigation }) {
   const [loader, setLoader] = useState(false);
   const [obsecureText, setObsecureText] = useState(true);
+
   // Hàm xử lý form lỗi
   const inValidForm = () => {
     Alert.alert("Lỗi", "Vui lòng cung cấp tất cả các trường bắt buộc", [
@@ -41,12 +42,15 @@ export default function RegisterScreen({ navigation }) {
     ]);
   };
 
-  // Hàm đăng ký
+  /**
+   * Hàm xử lý đăng ký tài khoản
+   * @param {Array} values - Thông tin đăng ký
+   */
   const handleRegister = async (values) => {
     setLoader(true);
     try {
       const resp = await GlobalApi.register(values);
-      if (resp.status === 201) {
+      if (resp.status === 201 && !resp.data.error) {
         Toast.show({
           type: "success",
           text1: "Thành công",

@@ -22,7 +22,6 @@ import GlobalApi from "../api/GlobalApi";
 import Toast from "react-native-toast-message";
 import CarouselHome from "../components/CarouselHome";
 import { formatCurrency } from "../helpers";
-import { API_URL } from "../config";
 
 const ProductDetailScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
@@ -31,7 +30,10 @@ const ProductDetailScreen = ({ navigation }) => {
   const [loadingAddToCart, setLoadingAddToCart] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
-  // Hàm thêm sp vào giỏ hàng
+  /**
+   * Hàm thêm sp vào giỏ hàng
+   * @param {String} productId - id của sp
+   */
   const handleAddToCart = async (productId) => {
     if (user) {
       setLoadingAddToCart(true);

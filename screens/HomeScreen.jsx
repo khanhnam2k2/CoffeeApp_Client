@@ -14,14 +14,12 @@ import GlobalApi from "../api/GlobalApi";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import CarouselHome from "../components/CarouselHome";
 import Carousel from "react-native-snap-carousel";
-import Toast from "react-native-toast-message";
 import { AuthContext } from "../context/AuthContext";
 import { slides } from "../constants";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const HomeScreen = () => {
-  const { user, setUser, cartItemCount, setCartItemCount } =
-    useContext(AuthContext);
+  const { user, cartItemCount, setCartItemCount } = useContext(AuthContext);
 
   const [products, setProducts] = useState([]);
   const [loadingProduct, setLoadingProduct] = useState(false);

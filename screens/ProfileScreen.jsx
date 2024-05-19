@@ -34,6 +34,13 @@ const ProfileScreen = () => {
 
   const navigation = useNavigation();
 
+  useFocusEffect(
+    useCallback(() => {
+      getTotalOrders();
+    }, [user?._id])
+  );
+
+  // Hàm lấy tổng số lượng đơn hàng
   const getTotalOrders = async () => {
     try {
       const response = await GlobalApi.getTotalOrders(user?._id);
@@ -43,12 +50,7 @@ const ProfileScreen = () => {
     } catch (error) {}
   };
 
-  useFocusEffect(
-    useCallback(() => {
-      getTotalOrders();
-    }, [user?._id])
-  );
-
+  // Hàm đăng xuất
   const logout = async () => {
     try {
       Alert.alert(
@@ -76,6 +78,11 @@ const ProfileScreen = () => {
       console.error("Có lỗi xảy ra");
     }
   };
+
+  /**
+   * Hàm cập nhật avatar cho người dùng
+   * @param {String} avatarUri - uri avatar
+   */
   const updateAvatarUser = async (avatarUri) => {
     try {
       const data = {
@@ -94,6 +101,8 @@ const ProfileScreen = () => {
       console.log(error);
     }
   };
+
+  // Hàm mở thư viện ảnh,chọn ảnh và cập nhật avatar
   const openImagePicker = async () => {
     let permissionResult =
       await ImagePicker.requestMediaLibraryPermissionsAsync();

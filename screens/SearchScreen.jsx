@@ -51,7 +51,11 @@ const SearchScreen = ({ navigation }) => {
     }
   };
 
-  // Hàm lấy sản phẩm
+  /**
+   * Hàm lấy sản phẩm
+   * @param {String} activeCategory - id của category active
+   * @param {String} text - keyword search
+   */
   const getProductList = async (activeCategory = null, text = "") => {
     setLoadingProduct(true);
     try {
@@ -72,7 +76,10 @@ const SearchScreen = ({ navigation }) => {
     }
   };
 
-  // Hàm lấy sản phẩm theo category
+  /**
+   * Hàm lấy sản phẩm theo category
+   * @param {String} categoryId - id của category
+   */
   const handleChangeCategory = async (categoryId) => {
     setActiveCategory(categoryId);
     clearSearch();
@@ -80,7 +87,10 @@ const SearchScreen = ({ navigation }) => {
     await getProductList(categoryId);
   };
 
-  // Hàm tìm kiếm sp
+  /**
+   * Hàm tìm kiếm sp theo keyword
+   * @param {String} text - keyword search
+   */
   const handleSearch = async (text) => {
     setSearch(text);
     if (text.length > 2) {
@@ -100,6 +110,7 @@ const SearchScreen = ({ navigation }) => {
     searchInputRef?.current?.clear();
   };
 
+  // Hàm thực hiện tìm kiếm khi người dùng thay đổi input
   const handleTextDebounce = useCallback(debounce(handleSearch, 400), []);
 
   return (

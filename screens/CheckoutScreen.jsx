@@ -34,11 +34,17 @@ const validationSchema = Yup.object().shape({
     .matches(/^[0-9]{10}$/, "Số điện thoại phải có 10 chữ số")
     .required("Số điện thoại là bắt buộc"),
 });
+
 const CheckoutScreen = ({ navigation }) => {
   const { user } = useContext(AuthContext);
   const route = useRoute();
   const { itemCheckout, totalPrice, type } = route.params;
   const [loading, setLoading] = useState(false);
+
+  /**
+   * Hàm xử lý đặt hàng
+   * @param {*} values - Thông tin đặt hàng
+   */
   const checkout = async (values) => {
     setLoading(true);
     try {
@@ -56,20 +62,21 @@ const CheckoutScreen = ({ navigation }) => {
       };
 
       const response = await GlobalApi.createOrder(data);
-      if (response.data.success) {
+      if (response?.data?.success) {
         Toast.show({
           type: "success",
           text1: "Thành công",
-          text2: response.data.message,
+          text2: response?.data?.message,
         });
+        navigation.replace("Order");
       }
-      navigation.replace("Order");
     } catch (error) {
       console.log(error);
     } finally {
       setLoading(false);
     }
   };
+
   return (
     <SafeAreaView className="flex-1 bg-white  pt-4 mx-4 ">
       <View className="flex-1">

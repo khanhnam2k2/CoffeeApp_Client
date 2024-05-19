@@ -27,9 +27,10 @@ const validationSchema = Yup.object().shape({
 });
 
 export default function LoginScreen({ navigation }) {
-  const { user, setUser } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const [loader, setLoader] = useState(false);
   const [obsecureText, setObsecureText] = useState(true);
+
   // Hàm xử lý form lỗi
   const inValidForm = () => {
     Alert.alert("Lỗi", "Vui lòng cung cấp tất cả các trường bắt buộc", [
@@ -40,7 +41,10 @@ export default function LoginScreen({ navigation }) {
     ]);
   };
 
-  // Hàm đăng nhập
+  /**
+   * Hàm xử lý đăng nhập
+   * @param {Array} values - Thông tin đăng nhập
+   */
   const handleLogin = async (values) => {
     setLoader(true);
     try {

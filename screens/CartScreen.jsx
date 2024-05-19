@@ -61,6 +61,7 @@ const CartScreen = ({ navigation }) => {
     );
   }, [checkedItems, cartData]);
 
+  // Hàm lấy thông tin giỏ hàng của người dùng
   const getCart = async () => {
     setLoading(true);
     try {
@@ -73,6 +74,10 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
+  /**
+   * Hàm chọn sản phẩm
+   * @param {String} itemId - id của sản phẩm
+   */
   const handleCheckbox = (itemId) => {
     setCheckedItems((prev) => {
       const updatedCheckedItems = { ...prev, [itemId]: !prev[itemId] };
@@ -84,6 +89,7 @@ const CartScreen = ({ navigation }) => {
     });
   };
 
+  // Hàm chọn tất cả sp trong giỏ hàng
   const toggleSelectAll = () => {
     setSelectAllChecked((prev) => !prev);
     const newCheckedItems = {};
@@ -93,6 +99,11 @@ const CartScreen = ({ navigation }) => {
     setCheckedItems(newCheckedItems);
   };
 
+  /**
+   * Hàm cập nhật số lượng sản phẩm trong giỏ hàng
+   * @param {String} itemId - id của sản phẩm
+   * @param {Number} newQuantity - số lượng sp muốn cập nhật
+   */
   const updateCartItemQuantity = async (itemId, newQuantity) => {
     try {
       const data = { userId: user?._id, itemId: itemId, quantity: newQuantity };
@@ -116,12 +127,20 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
+  /**
+   * Hàm tăng số lượng sản phẩm
+   * @param {String} itemId - id của sản phẩm
+   */
   const incrementQuantity = (itemId) => {
     const updatedQuantity =
       cartData.items.find((item) => item._id === itemId).quantity + 1;
     updateCartItemQuantity(itemId, updatedQuantity);
   };
 
+  /**
+   * Hàm giảm số lượng sản phẩm
+   * @param {String} itemId - id của sản phẩm
+   */
   const decrementQuantity = (itemId) => {
     const currentQuantity = cartData.items.find(
       (item) => item._id === itemId
@@ -132,6 +151,7 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
+  // Hàm xóa sản phẩm được chọn ra khỏi giỏ hàng
   const deleteCheckedItems = async () => {
     const checkedItemIds = Object.keys(checkedItems).filter(
       (itemId) => checkedItems[itemId]
@@ -166,6 +186,7 @@ const CartScreen = ({ navigation }) => {
     ]);
   };
 
+  // Hàm xử lý thanh toán
   const handleCheckout = () => {
     const checkedItemIds = Object.keys(checkedItems).filter(
       (itemId) => checkedItems[itemId]
@@ -181,6 +202,7 @@ const CartScreen = ({ navigation }) => {
     }
   };
 
+  // Hàm trả về các sp được chọn
   const getCheckedItems = () =>
     cartData.items.filter((item) => checkedItems[item._id]);
 
