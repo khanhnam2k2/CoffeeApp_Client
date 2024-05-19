@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { View, Text, TouchableOpacity, FlatList, Image } from "react-native";
 import { TabView, TabBar } from "react-native-tab-view";
 import { AntDesign } from "@expo/vector-icons";
@@ -7,9 +7,10 @@ import GlobalApi from "../api/GlobalApi";
 import { formatCurrency } from "../helpers";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { API_URL } from "../config";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useRoute } from "@react-navigation/native";
+import Empty from "../components/common/Empty";
+import Searching from "../components/common/Searching";
 
 const renderItem = ({ item }) => {
   return (
@@ -47,41 +48,84 @@ const renderItem = ({ item }) => {
     </View>
   );
 };
+
 // Component con cho tab "Chờ xác nhận"
-const PendingOrdersScreen = ({ orders }) => {
+const PendingOrdersScreen = ({ orders, loading }) => {
   return (
-    <View className="flex-1 mt-4">
-      <FlatList
-        data={orders}
-        renderItem={renderItem}
-        keyExtractor={(order) => order?._id}
-      />
+    <View className="flex-1">
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <Searching />
+        </View>
+      ) : orders.length === 0 ? (
+        <View className="flex-1 justify-center items-center">
+          <Empty />
+          <Text className="text-base font-bold mt-2">
+            Không có đơn hàng nào
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          className="mt-4"
+          data={orders}
+          renderItem={renderItem}
+          keyExtractor={(order) => order?._id}
+        />
+      )}
     </View>
   );
 };
 
 // Component con cho tab "Đang giao"
-const ShippingOrdersScreen = ({ orders }) => {
+const ShippingOrdersScreen = ({ orders, loading }) => {
   return (
-    <View className="flex-1 mt-4">
-      <FlatList
-        data={orders}
-        renderItem={renderItem}
-        keyExtractor={(order) => order._id}
-      />
+    <View className="flex-1">
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <Searching />
+        </View>
+      ) : orders.length === 0 ? (
+        <View className="flex-1 justify-center items-center">
+          <Empty />
+          <Text className="text-base font-bold mt-2">
+            Không có đơn hàng nào
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          className="mt-4"
+          data={orders}
+          renderItem={renderItem}
+          keyExtractor={(order) => order._id}
+        />
+      )}
     </View>
   );
 };
 
 // Component con cho tab "Hoàn thành"
-const CompletedOrdersScreen = ({ orders }) => {
+const CompletedOrdersScreen = ({ orders, loading }) => {
   return (
-    <View className="flex-1 mt-4">
-      <FlatList
-        data={orders}
-        renderItem={renderItem}
-        keyExtractor={(order) => order._id}
-      />
+    <View className="flex-1">
+      {loading ? (
+        <View className="flex-1 justify-center items-center">
+          <Searching />
+        </View>
+      ) : orders.length === 0 ? (
+        <View className="flex-1 justify-center items-center">
+          <Empty />
+          <Text className="text-base font-bold mt-2">
+            Không có đơn hàng nào
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          className="mt-4"
+          data={orders}
+          renderItem={renderItem}
+          keyExtractor={(order) => order._id}
+        />
+      )}
     </View>
   );
 };
@@ -89,6 +133,8 @@ const CompletedOrdersScreen = ({ orders }) => {
 const OrderScreen = ({ navigation }) => {
   const route = useRoute();
   const { user } = useContext(AuthContext);
+  const [loading, setLoading] = useState(true);
+
   // Hàm gọi API để lấy danh sách đơn hàng dựa trên trạng thái
   const fetchOrdersByStatus = async (status) => {
     try {
@@ -99,6 +145,7 @@ const OrderScreen = ({ navigation }) => {
       return [];
     }
   };
+
   const [index, setIndex] = useState(route.params?.tabIndex || 0); // Chỉ số của tab hiện tại
   const [routes] = useState([
     { key: "pending", title: "Chờ xác nhận" },
@@ -113,6 +160,7 @@ const OrderScreen = ({ navigation }) => {
 
   useEffect(() => {
     const fetchOrders = async () => {
+      setLoading(true);
       const pendingOrders = await fetchOrdersByStatus(0);
       const shippingOrders = await fetchOrdersByStatus(1);
       const completedOrders = await fetchOrdersByStatus(2);
@@ -121,18 +169,26 @@ const OrderScreen = ({ navigation }) => {
         shipping: shippingOrders,
         completed: completedOrders,
       });
+      setLoading(false);
     };
 
     fetchOrders();
   }, []);
+
   const renderScene = ({ route }) => {
     switch (route.key) {
       case "pending":
-        return <PendingOrdersScreen orders={orders.pending} />;
+        return (
+          <PendingOrdersScreen orders={orders.pending} loading={loading} />
+        );
       case "shipping":
-        return <ShippingOrdersScreen orders={orders.shipping} />;
+        return (
+          <ShippingOrdersScreen orders={orders.shipping} loading={loading} />
+        );
       case "completed":
-        return <CompletedOrdersScreen orders={orders.completed} />;
+        return (
+          <CompletedOrdersScreen orders={orders.completed} loading={loading} />
+        );
       default:
         return null;
     }
