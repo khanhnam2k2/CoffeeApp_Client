@@ -11,11 +11,16 @@ import { AuthContext } from "../context/AuthContext";
 import { useRoute } from "@react-navigation/native";
 import Empty from "../components/common/Empty";
 import Searching from "../components/common/Searching";
+import moment from "moment";
 
 // Hiển thị các sp trong đơn hàng
 const renderItem = ({ item }) => {
   return (
     <View className="mb-4 border-2 p-3 ">
+      <View className="flex-row items-center gap-1 px-1">
+        <Text className="font-bold">Ngày đặt: </Text>
+        <Text>{moment(item.createdAt).format("DD/MM/YYYY")}</Text>
+      </View>
       <FlatList
         data={item.items}
         renderItem={({ item: orderItem }) => (
