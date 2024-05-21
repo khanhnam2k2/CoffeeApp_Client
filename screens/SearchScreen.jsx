@@ -186,7 +186,6 @@ const SearchScreen = ({ navigation }) => {
           )}
         </View>
 
-        {/* coffee cards */}
         <View className="flex-1">
           {!loadingProduct ? (
             products.length > 0 ? (
