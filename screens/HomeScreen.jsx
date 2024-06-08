@@ -87,7 +87,7 @@ const HomeScreen = () => {
               </View>
             </View>
           </View>
-          {user ? (
+          {user && (
             <TouchableOpacity
               onPress={() => navigation.navigate("Cart")}
               className="relative"
@@ -99,10 +99,6 @@ const HomeScreen = () => {
                 <Text className="px-1 text-xs text-white">{cartItemCount}</Text>
               </View>
               <AntDesign name="shoppingcart" size={27} color="black" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-              <Text>Login</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -117,7 +113,7 @@ const HomeScreen = () => {
             <Text className="text-2xl font-bold">Best Sellers</Text>
             <TouchableOpacity
               className="p-3 rounded-full shadow bg-gray-300"
-              onPress={() => {}}
+              onPress={() => navigation.navigate("AllProducts")}
             >
               <Ionicons name="grid" size={24} color="black" />
             </TouchableOpacity>
