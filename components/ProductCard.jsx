@@ -10,7 +10,7 @@ import { TouchableOpacity } from "react-native";
 import { formatCurrency, truncateText } from "../helpers";
 import { API_URL } from "../config";
 
-const ProductCard = ({ item, index, isSmallItem }) => {
+const ProductCard = ({ item, index, isSmallItem, spacing }) => {
   const navigation = useNavigation();
 
   return (
@@ -24,6 +24,7 @@ const ProductCard = ({ item, index, isSmallItem }) => {
           width: isSmallItem ? 180 : 250,
           marginBottom: 10,
           paddingBottom: 10,
+          marginRight: spacing || 0,
         }}
       >
         <View

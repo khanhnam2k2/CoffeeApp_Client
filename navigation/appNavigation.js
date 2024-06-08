@@ -15,6 +15,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import Toast from "react-native-toast-message";
 import CheckoutScreen from "../screens/CheckoutScreen";
 import OrderScreen from "../screens/OrderScreen";
+import AllProductScreen from "../screens/AllProductScreen";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -64,6 +65,11 @@ export default function AppNavigation() {
             name="Register"
             options={{ headerShown: false }}
             component={RegisterScreen}
+          />
+          <Stack.Screen
+            name="AllProducts"
+            options={{ headerShown: false }}
+            component={AllProductScreen}
           />
         </Stack.Navigator>
       </AuthProvider>

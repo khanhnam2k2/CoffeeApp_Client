@@ -58,6 +58,17 @@ const getProductList = async () => {
   }
 };
 
+const getAllProducts = async (page, limit) => {
+  try {
+    const response = await axiosClient.get(
+      "/api/product?page=" + page + "&limit=" + limit
+    );
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 const getProductBestSellers = async () => {
   try {
     const response = await axiosClient.get("/api/product?bestsellers=true");
@@ -181,4 +192,5 @@ export default {
   createOrder,
   getOrderListByStatus,
   getTotalOrders,
+  getAllProducts,
 };
